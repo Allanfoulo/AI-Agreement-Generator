@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BizDoc AI: Agreement Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"></noscript>
+    <style>
+      body {
+        font-family: 'Inter', sans-serif;
+      }
+
+      /* Styles for editable content */
+      [contenteditable="true"] {
+        outline: none; /* Remove default browser outline */
+        border: 1px dashed #A0AEC0; /* Subtle dashed border for identification */
+        padding: 4px;
+        border-radius: 4px;
+        transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+        cursor: text;
+        display: block; /* Ensure paragraphs and other elements take up full width for easier clicking */
+      }
+
+      [contenteditable="true"]:hover {
+        background-color: #EDF2F7; /* Slightly lighter background on hover */
+        border-color: #718096; /* More visible border on hover */
+      }
+
+      [contenteditable="true"]:focus {
+        background-color: #EBF4FF;
+        border-color: #6366f1; /* Indigo color to match theme on focus */
+        border-style: solid;
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.25.0"
+  }
+}
+</script>
+<!-- Library for client-side PDF generation -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+  <body class="bg-gray-100 text-gray-800">
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>
