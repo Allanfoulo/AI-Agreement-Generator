@@ -128,9 +128,20 @@ export const UserInput: React.FC<UserInputProps> = ({
     const selectedPackage = itemPackages.find(p => p.id === selectedPackageId);
     if (selectedPackage) {
         const total = selectedPackage.items.reduce((sum, item) => sum + item.price, 0);
-        let breakdown = selectedPackage.items.map(item => `- Item: ${item.name}, Description: ${item.description}, Price: R ${item.price.toFixed(2)}`).join('; ');
+
+        // For Quote's "Cost Breakdown" table which has 3 columns: Item, Description, Amount
+        const quoteBreakdownHtml = selectedPackage.items.map(item => 
+          `<tr><td style="padding: 0.75rem; border-bottom: 1px solid #eee;">${item.name}</td><td style="padding: 0.75rem; border-bottom: 1px solid #eee;">${item.description}</td><td style="text-align: right; padding: 0.75rem; border-bottom: 1px solid #eee;">${item.price.toFixed(2)}</td></tr>`
+        ).join('');
+        
+        // For Invoice's items table which has 4 columns: Description, Rate, Qty, Amount
+        const invoiceBreakdownHtml = selectedPackage.items.map(item =>
+          `<tr><td style="padding: 0.75rem; border-bottom: 1px solid #eee;">${item.name}: ${item.description}</td><td style="text-align: right; padding: 0.75rem; border-bottom: 1px solid #eee;">${item.price.toFixed(2)}</td><td style="text-align: right; padding: 0.75rem; border-bottom: 1px solid #eee;">1</td><td style="text-align: right; padding: 0.75rem; border-bottom: 1px solid #eee;">${item.price.toFixed(2)}</td></tr>`
+        ).join('');
+
         finalPrompt += ` Project Scope: ${selectedPackage.name}.`;
-        finalPrompt += ` The Project Cost Breakdown is as follows: ${breakdown}.`;
+        finalPrompt += ` For the QUOTE document, populate the "Cost Breakdown" table's <tbody> with the following exact HTML: '${quoteBreakdownHtml}'.`;
+        finalPrompt += ` For the INVOICE document, populate the items table's <tbody> with the following exact HTML, completely replacing any placeholder rows: '${invoiceBreakdownHtml}'.`;
         finalPrompt += ` The total project cost is R ${total.toFixed(2)}.`;
         finalPrompt += ` The deposit is 40% and the final balance is 60%.`;
     } else {
