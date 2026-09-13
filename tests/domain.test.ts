@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { calculateFinancialDocument } from "../src/domain/financial/money.ts";
 import { assertTransition, canTransition } from "../src/domain/documents/lifecycle.ts";
 import { createBizDocKernel } from "../src/composition/bizdoc-kernel.ts";
+import { LocalStorageDocumentSetRepository } from "../src/infrastructure/persistence/local-storage-document-set-repository.ts";
 
 test("calculates financial totals using integer minor units", () => {
   const result = calculateFinancialDocument({
@@ -85,4 +86,25 @@ test("outbox flushes events to the message bus", async () => {
   await kernel.outbox.flush(kernel.messageBus);
   assert.deepEqual(seen, ["evt_1"]);
   assert.equal(kernel.outbox.pending().length, 0);
+});
+
+test("local document-set adapter validates and persists records", () => {
+  const values = new Map<string, string>();
+  const storage = {
+    getItem: (key: string) => values.get(key) ?? null,
+    setItem: (key: string, value: string) => values.set(key, value),
+    removeItem: (key: string) => values.delete(key),
+  } as unknown as Storage;
+  const repository = new LocalStorageDocumentSetRepository(storage);
+
+  repository.save({
+    id: "set_1",
+    savedAt: "2026-09-14T00:00:00.000Z",
+    clientCompany: "Example Client",
+    documents: [{ type: "QUOTE", html: "<p>safe test content</p>" }],
+  });
+  assert.equal(repository.list()[0]?.clientCompany, "Example Client");
+
+  values.set("bizdoc_saved_document_sets", JSON.stringify([{ id: "bad", documents: "not-an-array" }]));
+  assert.deepEqual(repository.list(), []);
 });

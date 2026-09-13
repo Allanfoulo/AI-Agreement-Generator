@@ -5,7 +5,8 @@ import { formatDate } from '../utils/date';
 
 interface DashboardPageProps {
     documentSets: SavedDocumentSet[];
-    setDocumentSets: React.Dispatch<React.SetStateAction<SavedDocumentSet[]>>;
+    onUpdateDocumentSet: (documentSet: SavedDocumentSet) => void;
+    onDeleteDocumentSet: (id: string) => void;
 }
 
 const DocIcon: React.FC<{ type: string }> = ({ type }) => {
@@ -39,7 +40,7 @@ const DocIcon: React.FC<{ type: string }> = ({ type }) => {
     );
 };
 
-export const DashboardPage: React.FC<DashboardPageProps> = ({ documentSets, setDocumentSets }) => {
+export const DashboardPage: React.FC<DashboardPageProps> = ({ documentSets, onUpdateDocumentSet, onDeleteDocumentSet }) => {
     const [editingSet, setEditingSet] = useState<SavedDocumentSet | null>(null);
     const [deletingSetId, setDeletingSetId] = useState<string | null>(null);
 
@@ -55,9 +56,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ documentSets, setD
             documents: updatedDocuments,
             savedAt: new Date().toISOString(),
         };
-        setDocumentSets(prevSets => 
-            prevSets.map(set => set.id === editingSet.id ? updatedSet : set)
-        );
+        onUpdateDocumentSet(updatedSet);
         setEditingSet(null);
     };
 
@@ -67,7 +66,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ documentSets, setD
 
     const confirmDeletion = () => {
         if (deletingSetId) {
-            setDocumentSets(prevSets => prevSets.filter(set => set.id !== deletingSetId));
+            onDeleteDocumentSet(deletingSetId);
             setDeletingSetId(null);
         }
     };

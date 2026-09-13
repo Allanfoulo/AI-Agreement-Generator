@@ -14,9 +14,9 @@ import {
     INVOICE_COUNTER_KEY,
     QUOTE_COUNTER_KEY,
     COMPANY_LOGO_KEY,
-    SAVED_DOCUMENT_SETS_KEY,
     COMPANY_PROFILE_KEY
 } from './constants';
+import { localDocumentSets } from './src/composition/local-document-sets.ts';
 
 export interface ClientDetails {
   name: string;
@@ -147,14 +147,7 @@ const App: React.FC = () => {
     }
   });
   
-  const [savedDocumentSets, setSavedDocumentSets] = useState<SavedDocumentSet[]>(() => {
-    try {
-        const saved = localStorage.getItem(SAVED_DOCUMENT_SETS_KEY);
-        return saved ? JSON.parse(saved) : [];
-    } catch (e) {
-        return [];
-    }
-  });
+  const [savedDocumentSets, setSavedDocumentSets] = useState<SavedDocumentSet[]>(() => localDocumentSets.repository.list() as SavedDocumentSet[]);
 
   useEffect(() => {
     if (companyLogo) {
@@ -188,24 +181,42 @@ const App: React.FC = () => {
     localStorage.setItem(QUOTE_COUNTER_KEY, quoteCounter.toString());
   }, [quoteCounter]);
   
-  useEffect(() => {
-    localStorage.setItem(SAVED_DOCUMENT_SETS_KEY, JSON.stringify(savedDocumentSets));
-  }, [savedDocumentSets]);
-
   const handleSaveDocumentSet = useCallback((documents: Document[]) => {
     if (documents.length === 0) return;
     
     // Extract client name from the first available document for the card display
     const clientCompany = extractClientCompanyFromHtml(documents[0].html);
 
-    const newSet: SavedDocumentSet = {
-      id: new Date().toISOString(),
-      savedAt: new Date().toISOString(),
-      clientCompany: clientCompany,
-      documents: documents,
-    };
+    void localDocumentSets.save.execute(
+      { userId: 'local-user', organizationId: 'local-organization', correlationId: `save-${Date.now()}` },
+      { clientCompany, documents },
+    ).then((savedSet) => {
+      setSavedDocumentSets(prevSets => [savedSet as SavedDocumentSet, ...prevSets.filter(set => set.id !== savedSet.id)]);
+    }).catch((error: unknown) => {
+      console.error('Unable to save document set', error);
+    });
+  }, []);
 
-    setSavedDocumentSets(prevSets => [newSet, ...prevSets]);
+  const handleUpdateDocumentSet = useCallback((updatedSet: SavedDocumentSet) => {
+    void localDocumentSets.save.execute(
+      { userId: 'local-user', organizationId: 'local-organization', correlationId: `update-${Date.now()}` },
+      updatedSet,
+    ).then((savedSet) => {
+      setSavedDocumentSets(prevSets => prevSets.map(set => set.id === savedSet.id ? savedSet as SavedDocumentSet : set));
+    }).catch((error: unknown) => {
+      console.error('Unable to update document set', error);
+    });
+  }, []);
+
+  const handleDeleteDocumentSet = useCallback((id: string) => {
+    void localDocumentSets.delete.execute(
+      { userId: 'local-user', organizationId: 'local-organization', correlationId: `delete-${Date.now()}` },
+      id,
+    ).then(() => {
+      setSavedDocumentSets(prevSets => prevSets.filter(set => set.id !== id));
+    }).catch((error: unknown) => {
+      console.error('Unable to delete document set', error);
+    });
   }, []);
 
 
@@ -245,7 +256,8 @@ const App: React.FC = () => {
         return (
           <DashboardPage
             documentSets={savedDocumentSets}
-            setDocumentSets={setSavedDocumentSets}
+            onUpdateDocumentSet={handleUpdateDocumentSet}
+            onDeleteDocumentSet={handleDeleteDocumentSet}
           />
         );
       case 'companyProfile':

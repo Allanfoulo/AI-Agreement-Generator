@@ -63,6 +63,24 @@ export interface QuoteRepository {
   getById(id: string, organizationId: string): Promise<QuoteDraft | undefined>;
 }
 
+export type SavedDocument = {
+  readonly type: string;
+  readonly html: string;
+};
+
+export type SavedDocumentSetRecord = {
+  readonly id: string;
+  readonly savedAt: string;
+  readonly clientCompany: string;
+  readonly documents: readonly SavedDocument[];
+};
+
+export interface DocumentSetRepository {
+  list(): SavedDocumentSetRecord[];
+  save(documentSet: SavedDocumentSetRecord): void;
+  delete(id: string): void;
+}
+
 export type CreateQuoteDraftInput = {
   readonly clientId: string;
   readonly title: string;
