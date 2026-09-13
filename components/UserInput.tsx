@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ClientDetails, ItemPackage, Client, CompanyProfile } from '../App';
 import { formatDate } from '../utils/date';
+import { calculateFinancialDocument } from '../src/domain/financial/money';
 
 interface UserInputProps {
   onGenerate: (prompt: string) => void;
@@ -127,7 +128,22 @@ export const UserInput: React.FC<UserInputProps> = ({
     // Add package details OR the manual prompt
     const selectedPackage = itemPackages.find(p => p.id === selectedPackageId);
     if (selectedPackage) {
-        const total = selectedPackage.items.reduce((sum, item) => sum + item.price, 0);
+        const calculation = calculateFinancialDocument({
+          currency: 'ZAR',
+          depositBasisPoints: 4000,
+          lines: selectedPackage.items.map((item, index) => ({
+            id: `${selectedPackage.id}-${index}`,
+            name: item.name,
+            description: item.description,
+            quantityMilli: 1000,
+            unitPriceMinor: Math.round(item.price * 100),
+            discountBasisPoints: 0,
+            taxRateBasisPoints: 0,
+          })),
+        });
+        const total = calculation.totalMinor / 100;
+        const deposit = (calculation.depositMinor ?? 0) / 100;
+        const balance = (calculation.balanceMinor ?? 0) / 100;
 
         // For Quote's "Cost Breakdown" table which has 3 columns: Item, Description, Amount
         const quoteBreakdownHtml = selectedPackage.items.map(item => 
@@ -142,8 +158,8 @@ export const UserInput: React.FC<UserInputProps> = ({
         finalPrompt += ` Project Scope: ${selectedPackage.name}.`;
         finalPrompt += ` For the QUOTE document, populate the "Cost Breakdown" table's <tbody> with the following exact HTML: '${quoteBreakdownHtml}'.`;
         finalPrompt += ` For the INVOICE document, populate the items table's <tbody> with the following exact HTML, completely replacing any placeholder rows: '${invoiceBreakdownHtml}'.`;
-        finalPrompt += ` The total project cost is R ${total.toFixed(2)}.`;
-        finalPrompt += ` The deposit is 40% and the final balance is 60%.`;
+        finalPrompt += ` The authoritative total project cost is R ${total.toFixed(2)}.`;
+        finalPrompt += ` The authoritative deposit is R ${deposit.toFixed(2)} and the final balance is R ${balance.toFixed(2)}.`;
     } else {
         finalPrompt += ` Project Details: ${prompt}.`;
     }
