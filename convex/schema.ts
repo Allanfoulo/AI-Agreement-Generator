@@ -3,7 +3,7 @@ import { v } from 'convex/values';
 import { client, itemPackage, profile, recipient, legacySet, documentType, content } from './validators';
 
 export default defineSchema({
-  agentRuns: defineTable({ status: v.union(v.literal('running'), v.literal('completed'), v.literal('failed')), createdAt: v.number(), completedAt: v.optional(v.number()) }),
+  agentRuns: defineTable({ status: v.union(v.literal('running'), v.literal('completed'), v.literal('failed')), documentType: v.string(), inputHash: v.string(), outputKind: v.optional(v.string()), createdAt: v.number(), completedAt: v.optional(v.number()) }),
   workspace: defineTable({ key: v.string(), profile, recipient, logo: v.union(v.string(), v.null()), revision: v.number() }).index('by_key', ['key']),
   clients: defineTable({ data: client }).index('by_external', ['data.id']),
   packages: defineTable({ data: itemPackage }).index('by_external', ['data.id']),

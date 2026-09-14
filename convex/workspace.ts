@@ -1,4 +1,4 @@
-import { mutation, query } from './_generated/server';
+import { internalQuery, mutation, query } from './_generated/server';
 import { v } from 'convex/values';
 import { profile, recipient, client, itemPackage, legacySet } from './validators';
 import { recordEvent, requireDevelopment } from './events';
@@ -10,6 +10,25 @@ export const read = query({ args: {}, handler: async ctx => {
   return { profile: workspace?.profile ?? emptyProfile, recipient: workspace?.recipient ?? { name: '', company: '', address: '' }, logo: workspace?.logo ?? null, revision: workspace?.revision ?? 0,
     clients: (await ctx.db.query('clients').take(1000)).map(r => r.data), packages: (await ctx.db.query('packages').take(1000)).map(r => r.data),
     documents: (await ctx.db.query('legacyDocuments').order('desc').take(1000)).filter(r => !r.archived).map(r => ({ ...r.data, revision: r.revision })) };
+}});
+export const searchClients = internalQuery({ args: { query: v.string(), limit: v.number() }, handler: async (ctx, args) => {
+  const needle = args.query.trim().toLowerCase();
+  const rows = await ctx.db.query('clients').take(1000);
+  return rows.filter(row => !needle || `${row.data.name} ${row.data.company} ${row.data.address}`.toLowerCase().includes(needle)).slice(0, Math.min(Math.max(args.limit, 1), 10)).map(row => ({ id: row.data.id, name: row.data.name, company: row.data.company, address: row.data.address }));
+}});
+export const searchEmployees = internalQuery({ args: { query: v.string(), limit: v.number() }, handler: async (ctx, args) => {
+  const needle = args.query.trim().toLowerCase();
+  const rows = await ctx.db.query('employees').take(1000);
+  return rows.filter(row => !row.archived && (!needle || `${row.name} ${row.position} ${row.email}`.toLowerCase().includes(needle))).slice(0, Math.min(Math.max(args.limit, 1), 10)).map(row => ({ id: row._id, name: row.name, position: row.position, email: row.email }));
+}});
+export const listServices = internalQuery({ args: { query: v.string(), currency: v.optional(v.string()), limit: v.number() }, handler: async (ctx, args) => {
+  const needle = args.query.trim().toLowerCase();
+  const rows = await ctx.db.query('services').take(1000);
+  return rows.filter(row => !row.archived && (!args.currency || row.currency === args.currency) && (!needle || `${row.name} ${row.description}`.toLowerCase().includes(needle))).slice(0, Math.min(Math.max(args.limit, 1), 10)).map(row => ({ id: row._id, name: row.name, description: row.description, currency: row.currency }));
+}});
+export const safeCompanyDefaults = internalQuery({ args: {}, handler: async ctx => {
+  const row = await ctx.db.query('workspace').withIndex('by_key', q => q.eq('key', 'default')).unique();
+  return row ? { companyName: row.profile.companyName, representative: row.profile.repName, representativeTitle: row.profile.repTitle, address: row.profile.address } : { companyName: '', representative: '', representativeTitle: '', address: '' };
 }});
 export const update = mutation({ args: { profile: v.optional(profile), recipient: v.optional(recipient), logo: v.optional(v.union(v.string(), v.null())), expectedRevision: v.number() }, handler: async (ctx, args) => {
   requireDevelopment();
