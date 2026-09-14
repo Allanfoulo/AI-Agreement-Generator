@@ -1,22 +1,14 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { Header } from './components/Header';
-import { Generator } from './pages/Generator';
 import { ItemPackagesPage } from './pages/ItemPackages';
 import { ClientsPage } from './pages/Clients';
 import { DashboardPage } from './pages/Dashboard';
 import { CompanyProfilePage } from './pages/CompanyProfile';
 import { Document } from './components/DocumentDisplay';
 import { extractClientCompanyFromHtml } from './utils/parser';
-import { 
-    CLIENT_DETAILS_KEY,
-    ITEM_PACKAGES_KEY,
-    CLIENTS_KEY,
-    INVOICE_COUNTER_KEY,
-    QUOTE_COUNTER_KEY,
-    COMPANY_LOGO_KEY,
-    COMPANY_PROFILE_KEY
-} from './constants';
-import { localDocumentSets } from './src/composition/local-document-sets.ts';
+import { useWorkspace } from './src/adapters/use-workspace';
+import { BackendDocuments } from './pages/BackendDocuments';
+import { LegacyImport } from './pages/LegacyImport';
 
 export interface ClientDetails {
   name: string;
@@ -66,178 +58,22 @@ export interface CompanyProfile {
 const App: React.FC = () => {
   const [page, setPage] = useState<'generator' | 'packages' | 'clients' | 'dashboard' | 'companyProfile'>('generator');
   
-  const [companyLogo, setCompanyLogo] = useState<string | null>(() => {
-    try {
-        return localStorage.getItem(COMPANY_LOGO_KEY);
-    } catch (e) {
-        return null;
-    }
-  });
-
-  const [clientDetails, setClientDetails] = useState<ClientDetails>(() => {
-    try {
-        const saved = localStorage.getItem(CLIENT_DETAILS_KEY);
-        return saved ? JSON.parse(saved) : { 
-            name: 'Innovate Corp', 
-            company: 'Innovate Corporation', 
-            address: '123 Tech Avenue, Silicon Valley, CA 94043' 
-        };
-    } catch (e) {
-        return { name: '', company: '', address: '' };
-    }
-  });
-  
-  const [companyProfile, setCompanyProfile] = useState<CompanyProfile>(() => {
-    try {
-        const saved = localStorage.getItem(COMPANY_PROFILE_KEY);
-        return saved ? JSON.parse(saved) : {
-            repName: 'Tonderai M M P Mlauzi',
-            repTitle: 'Director',
-            companyName: 'Innovation Imperial',
-            address: 'Waterfall Ridge, Vorna Valley, Midrand, South Africa',
-            phone: '+27 69 790 6374',
-            email: 'tonderai@innovationimperial.co.za',
-            bankName: 'FNB',
-            accountName: 'Tonderai M M P Mlauzi',
-            accountNumber: '62719875932',
-            branchCode: '250655',
-            accountType: 'Cheque',
-            swiftCode: 'FIRNZAJJ'
-        };
-    } catch (e) {
-        return { repName: '', repTitle: '', companyName: '', address: '', phone: '', email: '', bankName: '', accountName: '', accountNumber: '', branchCode: '', accountType: '', swiftCode: '' };
-    }
-  });
-
-  const [itemPackages, setItemPackages] = useState<ItemPackage[]>(() => {
-    try {
-        const saved = localStorage.getItem(ITEM_PACKAGES_KEY);
-        return saved ? JSON.parse(saved) : [];
-    } catch (e) {
-        return [];
-    }
-  });
-
-  const [clients, setClients] = useState<Client[]>(() => {
-    try {
-        const saved = localStorage.getItem(CLIENTS_KEY);
-        return saved ? JSON.parse(saved) : [];
-    } catch (e) {
-        return [];
-    }
-  });
-
-  const [invoiceCounter, setInvoiceCounter] = useState<number>(() => {
-    try {
-        const saved = localStorage.getItem(INVOICE_COUNTER_KEY);
-        const num = saved ? parseInt(saved, 10) : 1;
-        return isNaN(num) ? 1 : num;
-    } catch (e) {
-        return 1;
-    }
-  });
-
-  const [quoteCounter, setQuoteCounter] = useState<number>(() => {
-    try {
-        const saved = localStorage.getItem(QUOTE_COUNTER_KEY);
-        const num = saved ? parseInt(saved, 10) : 1;
-        return isNaN(num) ? 1 : num;
-    } catch (e) {
-        return 1;
-    }
-  });
-  
-  const [savedDocumentSets, setSavedDocumentSets] = useState<SavedDocumentSet[]>(() => localDocumentSets.repository.list() as SavedDocumentSet[]);
-
-  useEffect(() => {
-    if (companyLogo) {
-      localStorage.setItem(COMPANY_LOGO_KEY, companyLogo);
-    } else {
-      localStorage.removeItem(COMPANY_LOGO_KEY);
-    }
-  }, [companyLogo]);
-
-  useEffect(() => {
-    localStorage.setItem(CLIENT_DETAILS_KEY, JSON.stringify(clientDetails));
-  }, [clientDetails]);
-  
-  useEffect(() => {
-    localStorage.setItem(COMPANY_PROFILE_KEY, JSON.stringify(companyProfile));
-  }, [companyProfile]);
-
-  useEffect(() => {
-    localStorage.setItem(ITEM_PACKAGES_KEY, JSON.stringify(itemPackages));
-  }, [itemPackages]);
-  
-  useEffect(() => {
-    localStorage.setItem(CLIENTS_KEY, JSON.stringify(clients));
-  }, [clients]);
-
-  useEffect(() => {
-    localStorage.setItem(INVOICE_COUNTER_KEY, invoiceCounter.toString());
-  }, [invoiceCounter]);
-
-  useEffect(() => {
-    localStorage.setItem(QUOTE_COUNTER_KEY, quoteCounter.toString());
-  }, [quoteCounter]);
-  
-  const handleSaveDocumentSet = useCallback((documents: Document[]) => {
-    if (documents.length === 0) return;
-    
-    // Extract client name from the first available document for the card display
-    const clientCompany = extractClientCompanyFromHtml(documents[0].html);
-
-    void localDocumentSets.save.execute(
-      { userId: 'local-user', organizationId: 'local-organization', correlationId: `save-${Date.now()}` },
-      { clientCompany, documents },
-    ).then((savedSet) => {
-      setSavedDocumentSets(prevSets => [savedSet as SavedDocumentSet, ...prevSets.filter(set => set.id !== savedSet.id)]);
-    }).catch((error: unknown) => {
-      console.error('Unable to save document set', error);
-    });
-  }, []);
-
-  const handleUpdateDocumentSet = useCallback((updatedSet: SavedDocumentSet) => {
-    void localDocumentSets.save.execute(
-      { userId: 'local-user', organizationId: 'local-organization', correlationId: `update-${Date.now()}` },
-      updatedSet,
-    ).then((savedSet) => {
-      setSavedDocumentSets(prevSets => prevSets.map(set => set.id === savedSet.id ? savedSet as SavedDocumentSet : set));
-    }).catch((error: unknown) => {
-      console.error('Unable to update document set', error);
-    });
-  }, []);
-
-  const handleDeleteDocumentSet = useCallback((id: string) => {
-    void localDocumentSets.delete.execute(
-      { userId: 'local-user', organizationId: 'local-organization', correlationId: `delete-${Date.now()}` },
-      id,
-    ).then(() => {
-      setSavedDocumentSets(prevSets => prevSets.filter(set => set.id !== id));
-    }).catch((error: unknown) => {
-      console.error('Unable to delete document set', error);
-    });
-  }, []);
-
-
+  const { data, error, pending, setCompanyLogo, setCompanyProfile, setClients, setItemPackages, saveDocumentSet, deleteDocumentSet } = useWorkspace();
+  const [clientDetails, setClientDetails] = useState<ClientDetails>({ name: '', company: '', address: '' });
+  const [view, setView] = useState<'classic' | 'documents' | 'import'>('documents');
+  const companyLogo = data?.logo ?? null;
+  const companyProfile = data?.profile;
+  const clients = data?.clients ?? [];
+  const itemPackages = data?.packages ?? [];
+  const savedDocumentSets = data?.documents ?? [];
+  const handleSaveDocumentSet = (documents: Document[]) => saveDocumentSet({ id: crypto.randomUUID(), savedAt: new Date().toISOString(), clientCompany: clientDetails.company || 'Draft', documents });
+  const handleUpdateDocumentSet = (set: SavedDocumentSet) => saveDocumentSet(set);
+  const handleDeleteDocumentSet = (id: string) => deleteDocumentSet(id);
+  if (!data) return <p role="status" className="p-8">Connecting to workspace…</p>;
   const renderPage = () => {
     switch(page) {
       case 'generator':
-        return (
-          <Generator
-            onSaveDocumentSet={handleSaveDocumentSet}
-            clientDetails={clientDetails}
-            onClientDetailsChange={setClientDetails}
-            itemPackages={itemPackages}
-            clients={clients}
-            invoiceCounter={invoiceCounter}
-            setInvoiceCounter={setInvoiceCounter}
-            quoteCounter={quoteCounter}
-            setQuoteCounter={setQuoteCounter}
-            companyLogo={companyLogo}
-            companyProfile={companyProfile}
-          />
-        );
+        return <BackendDocuments clients={clients} />;
       case 'packages':
         return (
           <ItemPackagesPage
@@ -281,7 +117,10 @@ const App: React.FC = () => {
         setCompanyLogo={setCompanyLogo}
       />
       <main className="flex-grow container mx-auto p-4 md:p-6 lg:p-8">
-        {renderPage()}
+        <nav className="flex gap-4 mb-4"><button onClick={() => setView('documents')}>Documents</button><button onClick={() => setView('classic')}>Company, clients & packages</button><button onClick={() => setView('import')}>Import existing data</button></nav>
+        {pending > 0 && <p role="status">Saving…</p>}
+        {error && <p role="alert" className="text-red-700">{error}</p>}
+        {view === 'documents' ? <BackendDocuments clients={clients} /> : view === 'import' ? <LegacyImport /> : renderPage()}
       </main>
     </div>
   );

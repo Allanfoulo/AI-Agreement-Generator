@@ -2,6 +2,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
+import { ConvexProvider, ConvexReactClient } from 'convex/react';
+const url = import.meta.env.VITE_CONVEX_URL;
+const convex = url ? new ConvexReactClient(url) : null;
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
@@ -11,6 +14,6 @@ if (!rootElement) {
 const root = ReactDOM.createRoot(rootElement);
 root.render(
   <React.StrictMode>
-    <App />
+    {convex ? <ConvexProvider client={convex}><App /></ConvexProvider> : <p>Configure VITE_CONVEX_URL and start the Convex backend.</p>}
   </React.StrictMode>
 );

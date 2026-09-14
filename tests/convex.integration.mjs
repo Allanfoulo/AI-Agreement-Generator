@@ -1,0 +1,38 @@
+import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import { ConvexHttpClient } from 'convex/browser';
+import { api } from '../convex/_generated/api.js';
+
+const env = readFileSync('.env.local', 'utf8');
+const url = env.match(/^VITE_CONVEX_URL=(.*)$/m)?.[1]?.trim();
+assert.ok(url?.startsWith('http://127.0.0.1:'), 'Integration tests require the local development backend.');
+const convex = new ConvexHttpClient(url);
+const key = `integration-${Date.now()}`;
+let workspace = await convex.query(api.workspace.read, {});
+if (!workspace.profile.companyName) await convex.mutation(api.workspace.update, { profile: { ...workspace.profile, companyName: 'Synthetic Integration Test Company' }, expectedRevision: workspace.revision });
+await convex.mutation(api.workspace.saveClient, { data: { id: key, name: 'Synthetic Client', company: 'Test Company', address: 'Test Address', notes: '' } });
+const content = { title: key, recipientId: key, currency: 'ZAR', lines: [{ id: '1', name: 'Test service', unitPriceMinor: 10000, quantityMilli: 1500 }], sections: [{ heading: 'Scope', body: 'Synthetic test content.' }], depositBasisPoints: 4000, issueDate: '2026-09-15', templateKey: 'basic@1' };
+const args = { type: 'quote', content, expectedRevision: 0, requestKey: `${key}-draft` };
+const id = await convex.mutation(api.documents.save, args);
+assert.equal(await convex.mutation(api.documents.save, args), id);
+await assert.rejects(() => convex.mutation(api.documents.save, { ...args, content: { ...content, title: 'Changed' } }));
+const outcomes = await Promise.allSettled([convex.mutation(api.documents.issue, { id, expectedRevision: 1 }), convex.mutation(api.documents.issue, { id, expectedRevision: 1 })]);
+assert.equal(outcomes.filter(r => r.status === 'fulfilled').length, 1);
+await assert.rejects(() => convex.mutation(api.documents.save, { ...args, id, expectedRevision: 2, requestKey: `${key}-edit` }));
+const versions = await convex.query(api.documents.versions, { id }); assert.equal(versions.length, 1); assert.equal(versions[0].totalMinor, 15000);
+await convex.mutation(api.documents.transition, { id, expectedRevision: 2, status: 'accepted' });
+const invoice = await convex.mutation(api.documents.convert, { id, basisPoints: 4000, requestKey: `${key}-convert` });
+assert.equal(await convex.mutation(api.documents.convert, { id, basisPoints: 4000, requestKey: `${key}-convert` }), invoice);
+await assert.rejects(() => convex.mutation(api.documents.convert, { id, basisPoints: 10000, requestKey: `${key}-overbill` }));
+await convex.mutation(api.documents.issue, { id: invoice, expectedRevision: 1 });
+const pay = { id: invoice, amountMinor: 6000, requestKey: `${key}-payment` };
+await convex.mutation(api.documents.payment, pay); await convex.mutation(api.documents.payment, pay);
+assert.equal((await convex.query(api.documents.list, {})).find(d => d._id === invoice).amountPaidMinor, 6000);
+let completed;
+for (let i = 0; i < 30; i++) { const jobs = await convex.query(api.render.list, {}); completed = jobs.find(j => j.versionId === versions[0]._id && j.status === 'completed'); if (completed) break; await new Promise(r => setTimeout(r, 1000)); }
+assert.ok(completed?.url, 'PDF worker completed and stored the immutable version');
+assert.equal(completed.checksum?.length, 64);
+assert.ok((completed.pageCount ?? 0) >= 1);
+const pdf = await fetch(completed.url); assert.equal(pdf.status, 200); assert.ok((await pdf.arrayBuffer()).byteLength > 500);
+const events = await convex.query(api.events.recent, {}); assert.ok(events.some(e => e.entityId === id && e.action === 'DocumentIssued'));
+console.log('PASS: live persistence, idempotency, concurrent issuance, immutability, conversion limits, payments, PDF storage, event delivery. Synthetic test records are retained in the local workspace.');

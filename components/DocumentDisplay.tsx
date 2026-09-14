@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import DOMPurify from 'dompurify';
 
 export interface Document {
   type: string;
@@ -66,7 +67,7 @@ export const DocumentDisplay: React.FC<DocumentDisplayProps> = ({ documents, isL
   
   useEffect(() => {
       if (contentRef.current && localDocs[activeIndex]) {
-          contentRef.current.innerHTML = localDocs[activeIndex].html;
+          contentRef.current.innerHTML = DOMPurify.sanitize(localDocs[activeIndex].html);
       }
   }, [activeIndex, localDocs]);
 
@@ -90,7 +91,7 @@ export const DocumentDisplay: React.FC<DocumentDisplayProps> = ({ documents, isL
           const newDocs = [...localDocs];
           newDocs[activeIndex] = {
               ...newDocs[activeIndex],
-              html: contentRef.current.innerHTML,
+              html: DOMPurify.sanitize(contentRef.current.innerHTML),
           };
           setLocalDocs(newDocs);
           return newDocs;

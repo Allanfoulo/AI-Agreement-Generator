@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import DOMPurify from 'dompurify';
 import { Document } from './DocumentDisplay';
 import { formatDate } from '../utils/date';
 
@@ -30,7 +31,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({ isOpen, onClose,
 
     useEffect(() => {
         if (contentRef.current && localDocs[activeIndex]) {
-            contentRef.current.innerHTML = localDocs[activeIndex].html;
+            contentRef.current.innerHTML = DOMPurify.sanitize(localDocs[activeIndex].html);
         }
     }, [activeIndex, localDocs]);
 
@@ -43,7 +44,7 @@ export const DocumentEditor: React.FC<DocumentEditorProps> = ({ isOpen, onClose,
             const newDocs = [...localDocs];
             newDocs[activeIndex] = {
                 ...newDocs[activeIndex],
-                html: contentRef.current.innerHTML,
+                html: DOMPurify.sanitize(contentRef.current.innerHTML),
             };
             setLocalDocs(newDocs);
             return newDocs;
