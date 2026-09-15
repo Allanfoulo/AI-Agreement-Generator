@@ -14,17 +14,17 @@ export const read = query({ args: {}, handler: async ctx => {
 export const searchClients = internalQuery({ args: { query: v.string(), limit: v.number() }, handler: async (ctx, args) => {
   const needle = args.query.trim().toLowerCase();
   const rows = await ctx.db.query('clients').take(1000);
-  return rows.filter(row => !needle || `${row.data.name} ${row.data.company} ${row.data.address}`.toLowerCase().includes(needle)).slice(0, Math.min(Math.max(args.limit, 1), 10)).map(row => ({ id: row.data.id, name: row.data.name, company: row.data.company, address: row.data.address }));
+  return rows.filter(row => !needle || `${row.data.id} ${row.data.name} ${row.data.company} ${row.data.address}`.toLowerCase().includes(needle)).slice(0, Math.min(Math.max(args.limit, 1), 10)).map(row => ({ id: row.data.id, name: row.data.name, company: row.data.company, address: row.data.address }));
 }});
 export const searchEmployees = internalQuery({ args: { query: v.string(), limit: v.number() }, handler: async (ctx, args) => {
   const needle = args.query.trim().toLowerCase();
   const rows = await ctx.db.query('employees').take(1000);
-  return rows.filter(row => !row.archived && (!needle || `${row.name} ${row.position} ${row.email}`.toLowerCase().includes(needle))).slice(0, Math.min(Math.max(args.limit, 1), 10)).map(row => ({ id: row._id, name: row.name, position: row.position, email: row.email }));
+  return rows.filter(row => !row.archived && (!needle || `${row._id} ${row.name} ${row.position} ${row.email}`.toLowerCase().includes(needle))).slice(0, Math.min(Math.max(args.limit, 1), 10)).map(row => ({ id: row._id, name: row.name, position: row.position, email: row.email }));
 }});
 export const listServices = internalQuery({ args: { query: v.string(), currency: v.optional(v.string()), limit: v.number() }, handler: async (ctx, args) => {
   const needle = args.query.trim().toLowerCase();
   const rows = await ctx.db.query('services').take(1000);
-  return rows.filter(row => !row.archived && (!args.currency || row.currency === args.currency) && (!needle || `${row.name} ${row.description}`.toLowerCase().includes(needle))).slice(0, Math.min(Math.max(args.limit, 1), 10)).map(row => ({ id: row._id, name: row.name, description: row.description, currency: row.currency }));
+  return rows.filter(row => !row.archived && (!args.currency || row.currency === args.currency) && (!needle || `${row._id} ${row.name} ${row.description}`.toLowerCase().includes(needle))).slice(0, Math.min(Math.max(args.limit, 1), 10)).map(row => ({ id: row._id, name: row.name, description: row.description, currency: row.currency }));
 }});
 export const safeCompanyDefaults = internalQuery({ args: {}, handler: async ctx => {
   const row = await ctx.db.query('workspace').withIndex('by_key', q => q.eq('key', 'default')).unique();

@@ -15,12 +15,34 @@ export function BackendDocuments({ clients }: { clients: Client[] }) {
   const [editing, setEditing] = useState<Id<'documents'> | undefined>(); const [revision, setRevision] = useState(0); const [busy, setBusy] = useState(false); const [message, setMessage] = useState('');
   const [person, setPerson] = useState(''); const [position, setPosition] = useState(''); const [service, setService] = useState(''); const [price, setPrice] = useState('0');
   const [assistantInstruction, setAssistantInstruction] = useState('');
+  const [assistantDetails, setAssistantDetails] = useState('');
   async function run(work: () => Promise<unknown>) { setBusy(true); try { await work(); setMessage('Saved successfully.'); } catch (e) { setMessage(e instanceof Error ? e.message : 'Operation failed.'); } finally { setBusy(false); } }
-  async function askAssistant() { if (!assistantInstruction.trim()) return; setBusy(true); try { const result = await draftWithAssistant({ instruction: assistantInstruction, documentType: type }); if (result.kind === 'content_suggestion') { setNarrative(current => current ? `${current}\n\n${result.text}` : result.text); setMessage('Assistant suggestion added to the draft for review.'); } else { setMessage(result.text); } } catch (e) { setMessage(e instanceof Error ? e.message : 'Assistant unavailable.'); } finally { setBusy(false); } }
+  async function askAssistant() {
+    if (!assistantInstruction.trim()) return;
+    setBusy(true);
+    try {
+      const result = await draftWithAssistant({ instruction: assistantInstruction, documentType: type });
+      const details = [
+        result.assumptions.length ? `Assumptions: ${result.assumptions.join('; ')}` : '',
+        result.missingFields.length ? `Missing: ${result.missingFields.join('; ')}` : '',
+        result.sourceRecordIds.length ? `Sources: ${result.sourceRecordIds.join(', ')}` : '',
+      ].filter(Boolean).join('\n');
+      setAssistantDetails(details);
+      if (result.kind === 'content_suggestion') {
+        setNarrative(current => current ? `${current}\n\n${result.text}` : result.text);
+        setMessage('Assistant suggestion added to the draft for review.');
+      } else if (result.kind === 'draft_created') {
+        setMessage(`Draft created${result.documentId ? `: ${result.documentId}` : ''}. Review it in the document list.`);
+      } else {
+        setMessage(result.text);
+      }
+    } catch (e) { setMessage(e instanceof Error ? e.message : 'Assistant unavailable.'); }
+    finally { setBusy(false); }
+  }
   function edit(doc: typeof documents[number]) { setEditing(doc._id); setRevision(doc.revision); setType(doc.type); setTitle(doc.content.title); setRecipient(doc.content.recipientId); setCurrency(doc.content.currency); setNarrative(doc.content.sections.map(s => s.body).join('\n\n')); setLines(doc.content.lines.map(l => ({ id: l.id, name: l.name, quantityMilli: l.quantityMilli, unitPriceMinor: l.unitPriceMinor }))); }
   return <div className="space-y-6">
     <p className="text-sm">Shared development workspace. Documents persist in the backend. Authentication is deferred.</p>
-    <section className="bg-indigo-50 rounded-xl p-6 border border-indigo-100 space-y-3"><h2 className="text-xl">Drafting assistant</h2><p className="text-sm">Ask for narrative wording only. The assistant cannot issue, pay, delete, or change authoritative document facts.</p><textarea className={field} rows={3} placeholder="e.g. Add a concise after-hours support clause" value={assistantInstruction} onChange={e => setAssistantInstruction(e.target.value)} /><button className="bg-indigo-600 text-white rounded p-3" disabled={busy || !assistantInstruction.trim()} onClick={() => void askAssistant()}>Suggest wording</button></section>
+    <section className="bg-indigo-50 rounded-xl p-6 border border-indigo-100 space-y-3"><h2 className="text-xl">Drafting assistant</h2><p className="text-sm">Ask for narrative wording or explicitly request a draft. The assistant cannot issue, pay, delete, or change authoritative document facts.</p><textarea className={field} rows={3} placeholder="e.g. Add a concise after-hours support clause" value={assistantInstruction} onChange={e => setAssistantInstruction(e.target.value)} /><button className="bg-indigo-600 text-white rounded p-3" disabled={busy || !assistantInstruction.trim()} onClick={() => void askAssistant()}>Ask assistant</button>{assistantDetails && <p className="whitespace-pre-wrap text-xs text-gray-600" role="note">{assistantDetails}</p>}</section>
     <section className="bg-white rounded-xl p-6 border space-y-3"><h1 className="text-2xl">{editing ? 'Edit draft' : 'Create a document'}</h1>
       <label className="block">Type<select className={field} value={type} onChange={e => { setType(e.target.value as typeof type); setRecipient(''); }}>{['quote', 'invoice', 'sla', 'employee_letter'].map(t => <option key={t}>{t}</option>)}</select></label>
       <label className="block">Title<input className={field} value={title} onChange={e => setTitle(e.target.value)} /></label>

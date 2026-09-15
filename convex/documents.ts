@@ -1,4 +1,4 @@
-import { mutation, query } from './_generated/server';
+import { internalQuery, mutation, query } from './_generated/server';
 import { v } from 'convex/values';
 import { content, documentType } from './validators';
 import { requireDevelopment, recordEvent } from './events';
@@ -9,6 +9,11 @@ import { emptyProfile } from './workspace';
 
 export const list = query({ args: {}, handler: async ctx => { requireDevelopment(); return (await ctx.db.query('documents').order('desc').take(500)).filter(d => !d.archived); } });
 export const versions = query({ args: { id: v.id('documents') }, handler: async (ctx, { id }) => { requireDevelopment(); return ctx.db.query('versions').withIndex('by_document', q => q.eq('documentId', id)).collect(); } });
+export const sectionForAgent = internalQuery({ args: { id: v.id('documents'), heading: v.string() }, handler: async (ctx, { id, heading }) => {
+  const doc = await ctx.db.get(id); if (!doc || doc.archived) return null;
+  const section = doc.content.sections.find(item => item.heading.toLowerCase() === heading.trim().toLowerCase());
+  return section ? { documentId: id, heading: section.heading, body: section.body } : null;
+}});
 export const save = mutation({ args: { id: v.optional(v.id('documents')), type: documentType, content, expectedRevision: v.number(), requestKey: v.string() }, handler: async (ctx, args) => {
   requireDevelopment();
   const fingerprint = JSON.stringify(args);
@@ -51,7 +56,7 @@ export const issue = mutation({ args: { id: v.id('documents'), expectedRevision:
   await ctx.db.patch(id, { number, revision, status: doc.type === 'sla' ? 'awaiting_signature' : 'issued' });
   const versionId = await ctx.db.insert('versions', { documentId: id, revision, snapshot: doc.content, company, recipient, number, totalMinor: doc.totalMinor, createdAt: Date.now() });
   const jobId = await ctx.db.insert('jobs', { versionId, status: 'queued', attempts: 0, createdAt: Date.now() });
-  await ctx.scheduler.runAfter(0, internal.render.run, { jobId });
+  await ctx.scheduler.runAfter(0, internal.pdfRender.run, { jobId });
   await recordEvent(ctx, 'DocumentIssued', id);
   return number;
 }});

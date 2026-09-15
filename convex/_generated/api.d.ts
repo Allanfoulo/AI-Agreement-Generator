@@ -15,6 +15,7 @@ import type * as crons from "../crons.js";
 import type * as documents from "../documents.js";
 import type * as events from "../events.js";
 import type * as imports from "../imports.js";
+import type * as pdfRender from "../pdfRender.js";
 import type * as render from "../render.js";
 import type * as sweeps from "../sweeps.js";
 import type * as validators from "../validators.js";
@@ -34,6 +35,7 @@ declare const fullApi: ApiFromModules<{
   documents: typeof documents;
   events: typeof events;
   imports: typeof imports;
+  pdfRender: typeof pdfRender;
   render: typeof render;
   sweeps: typeof sweeps;
   validators: typeof validators;
