@@ -35,6 +35,9 @@ assert.equal((await convex.query(api.documents.list, {})).find(d => d._id === in
 let completed;
 for (let i = 0; i < 30; i++) { const jobs = await convex.query(api.render.list, {}); completed = jobs.find(j => j.versionId === versions[0]._id && j.status === 'completed'); if (completed) break; await new Promise(r => setTimeout(r, 1000)); }
 assert.ok(completed?.url, 'PDF worker completed and stored the immutable version');
+assert.equal(completed.documentId, id);
+assert.equal(completed.documentNumber, versions[0].number);
+assert.equal(completed.versionNumber, versions[0].revision);
 assert.equal(completed.checksum?.length, 64);
 assert.ok((completed.pageCount ?? 0) >= 1);
 const pdf = await fetch(completed.url); assert.equal(pdf.status, 200); assert.ok((await pdf.arrayBuffer()).byteLength > 500);

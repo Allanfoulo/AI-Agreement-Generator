@@ -1,5 +1,5 @@
 import type { DocumentRenderModel } from '../contracts/render-model';
-import { calculateFinancialDocument } from '../../domain/financial/money';
+import { calculateFinancialDocument } from '../../domain/financial/money.ts';
 
 type SnapshotLine = {
   id: string;

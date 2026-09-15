@@ -9,7 +9,7 @@
     "convex:check": "convex dev --once",
     "build": "vite build",
     "preview": "vite preview",
-    "test": "node --test --experimental-strip-types tests/domain.test.ts tests/architecture.test.mjs"
+    "test": "node --test --experimental-strip-types tests/domain.test.ts tests/pdf-model.test.ts tests/architecture.test.mjs"
   },
   "dependencies": {
     "@mastra/core": "^1.66.0",
