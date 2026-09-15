@@ -17,6 +17,7 @@ type IssuedVersion = {
   totalMinor: number;
   snapshot: {
     title: string;
+    templateKey: string;
     issueDate: string;
     currency: string;
     lines: SnapshotLine[];
@@ -40,6 +41,7 @@ export function toDocumentRenderModel(version: IssuedVersion): DocumentRenderMod
     number: version.number,
     revision: version.revision,
     type: version.type,
+    templateKey: version.snapshot.templateKey,
     title: version.snapshot.title,
     issueDate: version.snapshot.issueDate,
     currency: version.snapshot.currency,

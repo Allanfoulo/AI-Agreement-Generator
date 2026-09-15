@@ -6,6 +6,7 @@ import { calculateFinancialDocument } from '../src/domain/financial/money';
 import { assertTransition, type DocumentStatus } from '../src/domain/documents/lifecycle';
 import { internal } from './_generated/api';
 import { emptyProfile } from './workspace';
+import { normalizeTemplateKey } from '../src/pdf/templates/template-registry';
 
 export const list = query({ args: {}, handler: async ctx => { requireDevelopment(); return (await ctx.db.query('documents').order('desc').take(500)).filter(d => !d.archived); } });
 export const versions = query({ args: { id: v.id('documents') }, handler: async (ctx, { id }) => { requireDevelopment(); return ctx.db.query('versions').withIndex('by_document', q => q.eq('documentId', id)).collect(); } });
@@ -26,7 +27,8 @@ export const save = mutation({ args: { id: v.optional(v.id('documents')), type: 
   if (!args.content.title.trim() || !args.content.recipientId.trim()) throw new Error('Title and recipient are required.');
   const financial = args.type === 'quote' || args.type === 'invoice';
   const totalMinor = financial ? calculateFinancialDocument({ currency: args.content.currency, lines: args.content.lines, depositBasisPoints: args.content.depositBasisPoints }).totalMinor : 0;
-  const data = { type: args.type, content: args.content, totalMinor, revision: args.expectedRevision + 1 };
+  const normalizedContent = { ...args.content, templateKey: normalizeTemplateKey(args.type, args.content.templateKey) };
+  const data = { type: args.type, content: normalizedContent, totalMinor, revision: args.expectedRevision + 1 };
   const id = old ? old._id : await ctx.db.insert('documents', { ...data, status: 'draft', amountPaidMinor: 0, archived: false, createdAt: Date.now() });
   if (old) await ctx.db.patch(id, data);
   await ctx.db.insert('requests', { key: args.requestKey, fingerprint, result: id });
@@ -80,7 +82,7 @@ export const payment = mutation({ args: { id: v.id('documents'), amountMinor: v.
   await ctx.db.insert('requests', { key: args.requestKey, fingerprint, result: doc._id });
   await recordEvent(ctx, 'InvoicePaymentRecorded', doc._id, args.requestKey);
 }});
-export const convert = mutation({ args: { id: v.id('documents'), basisPoints: v.number(), requestKey: v.string() }, handler: async (ctx, args) => {
+export const convert = mutation({ args: { id: v.id('documents'), basisPoints: v.number(), requestKey: v.string(), templateKey: v.optional(v.string()) }, handler: async (ctx, args) => {
   requireDevelopment(); const fingerprint = JSON.stringify(args);
   const prior = await ctx.db.query('requests').withIndex('by_key', q => q.eq('key', args.requestKey)).unique();
   if (prior) { if (prior.fingerprint !== fingerprint) throw new Error('Request key conflict.'); return prior.result; }
@@ -90,7 +92,7 @@ export const convert = mutation({ args: { id: v.id('documents'), basisPoints: v.
   const amount = Math.floor(quote.totalMinor * args.basisPoints / 10000 + 0.5);
   const existing = await ctx.db.query('documents').withIndex('by_source', q => q.eq('sourceId', args.id)).collect();
   if (existing.filter(d => d.status !== 'void').reduce((sum, d) => sum + d.totalMinor, 0) + amount > quote.totalMinor) throw new Error('Conversion would exceed the accepted quote total.');
-  const id = await ctx.db.insert('documents', { type: 'invoice', content: { ...quote.content, title: `Invoice: ${quote.content.title}`, lines: [{ id: 'conversion', name: `${args.basisPoints / 100}% of ${quote.number}`, quantityMilli: 1000, unitPriceMinor: amount }], depositBasisPoints: 0 }, status: 'draft', revision: 1, totalMinor: amount, amountPaidMinor: 0, sourceId: quote._id, archived: false, createdAt: Date.now() });
+  const id = await ctx.db.insert('documents', { type: 'invoice', content: { ...quote.content, title: `Invoice: ${quote.content.title}`, lines: [{ id: 'conversion', name: `${args.basisPoints / 100}% of ${quote.number}`, quantityMilli: 1000, unitPriceMinor: amount }], depositBasisPoints: 0, templateKey: normalizeTemplateKey('invoice', args.templateKey ?? quote.content.templateKey) }, status: 'draft', revision: 1, totalMinor: amount, amountPaidMinor: 0, sourceId: quote._id, archived: false, createdAt: Date.now() });
   await ctx.db.insert('requests', { key: args.requestKey, fingerprint, result: id });
   await recordEvent(ctx, 'QuoteConvertedToInvoiceDraft', id, args.requestKey); return id;
 }});

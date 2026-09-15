@@ -16,6 +16,7 @@ export type DocumentRenderModel = {
   number: string;
   revision: number;
   type: 'quote' | 'invoice' | 'sla' | 'employee_letter';
+  templateKey: string;
   title: string;
   issueDate: string;
   currency: string;
