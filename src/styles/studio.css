@@ -131,9 +131,32 @@ button:focus-visible, a:focus-visible, summary:focus-visible, input:focus-visibl
 .brief-main .border-gray-200, .brief-main .border-gray-300 { border-color: var(--line); }
 .brief-main .text-gray-900, .brief-main .text-gray-800 { color: var(--ink); }
 .brief-main .text-gray-500, .brief-main .text-gray-600, .brief-main .text-gray-700 { color: var(--ink-muted); }
-.brief-main .bg-indigo-600 { background-color: var(--orange); }
-.brief-main .bg-indigo-600:hover { background-color: var(--orange-deep); }
 .brief-main .text-2xl { font-family: var(--serif); font-weight: 400; }
+.studio-page { color: var(--ink); }
+.studio-page > .grid { gap: 24px; }
+.studio-page > .grid > .bg-white, .studio-page > .bg-white { border: 1px solid var(--line); border-radius: 25px; background: var(--surface); box-shadow: 0 4px 18px oklch(0.35 0.02 150 / .025); }
+.studio-page h1 { margin-top: 0; font-family: var(--serif); font-size: 42px; font-weight: 400; letter-spacing: -.045em; line-height: 1.1; }
+.studio-page h2 { font-family: var(--serif); font-size: 25px; font-weight: 400; letter-spacing: -.035em; }
+.studio-page h3 { letter-spacing: -.015em; }
+.studio-page label { color: var(--ink); }
+.studio-page input, .studio-page textarea, .studio-page select { border-color: var(--line); border-radius: 10px; background: var(--paper); color: var(--ink); transition: border-color 180ms ease-out, background 180ms ease-out; }
+.studio-page input:focus, .studio-page textarea:focus, .studio-page select:focus { border-color: var(--orange); background: var(--surface); box-shadow: 0 0 0 3px oklch(0.54 0.145 38 / .12); outline: none; }
+.studio-page .bg-gray-50 { background-color: var(--paper-deep); }
+.studio-page .bg-gray-100 { background-color: var(--paper-deep); }
+.studio-page .border-gray-200, .studio-page .border-gray-300 { border-color: var(--line); }
+.studio-page .rounded-lg, .studio-page .rounded-md { border-radius: 12px; }
+.studio-page .text-red-500, .studio-page .text-red-600, .studio-page .text-red-700 { color: var(--orange-deep); }
+.studio-page .hover\:text-red-500:hover, .studio-page .hover\:text-red-600:hover, .studio-page .hover\:text-red-700:hover { color: var(--ink); }
+.studio-page .bg-red-600 { background-color: var(--orange-deep); }
+.studio-page .fixed .bg-black { background-color: oklch(0.22 0.025 155 / .62); }
+.studio-page .fixed .bg-white { border: 1px solid var(--line); border-radius: 25px; background-color: var(--surface); }
+.studio-page .fixed .bg-gray-200 { background-color: var(--paper-deep); }
+.studio-page .fixed .bg-gray-200:hover { background-color: var(--line); }
+.studio-page .fixed .text-white { color: var(--surface); }
+.import-page { max-width: 760px; padding: 32px; }
+.import-page h1 { margin: 10px 0 13px; }
+.import-page p { max-width: 60ch; color: var(--ink-muted); font-size: 13px; line-height: 1.7; }
+.studio-feedback-inline { min-height: 20px; margin-top: 18px; color: var(--orange-deep) !important; font-size: 11px !important; }
 @media (min-width: 1500px) { .workspace-hero { padding: 50px 60px; } .workspace-hero h1 { font-size: 58px; } }
 @media (max-width: 1150px) { .brief-shell { gap: 20px; } .app-rail { width: 208px; padding-inline: 14px; } .brief-main { padding-right: 4px; } .workspace-hero { padding: 34px 28px; } .workspace-hero h1 { font-size: 39px; } .hero-art { transform: scale(.82); } .document-grid { grid-template-columns: minmax(0, 1fr); } }
 @media (max-width: 760px) { .brief-shell { display: block; padding: 12px; } .app-rail { position: static; width: 100%; height: auto; min-height: 0; padding: 20px; border-radius: 24px; } .rail-brand { padding: 0; } .rail-create { margin: 20px 0 15px; width: 100%; } .rail-label, .rail-spacer { display: none; } .rail-nav { display: flex; overflow-x: auto; gap: 6px; } .rail-link { width: auto; flex-shrink: 0; white-space: nowrap; } .rail-secondary { display: flex; width: auto; margin: 12px 0 0; font-size: 11px; } .rail-profile, .rail-remove-logo { display: none; } .brief-main { padding: 24px 0 0; } .main-topline { margin-bottom: 20px; } .workspace-hero { grid-template-columns: minmax(0,1fr) 150px; min-height: 320px; border-radius: 26px; padding: 30px 24px; } .hero-art { transform: scale(.65); } .workspace-hero h1 { font-size: 35px; } .hero-kicker { font-size: 7px; line-height: 1.7; } .studio-section-heading h2 { font-size: 25px; } .studio-note { display: none; } }

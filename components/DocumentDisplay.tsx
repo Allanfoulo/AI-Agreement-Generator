@@ -199,12 +199,12 @@ export const DocumentDisplay: React.FC<DocumentDisplayProps> = ({ documents, isL
     if (isLoading) {
       return (
         <div className="flex flex-col items-center justify-center text-center p-10">
-          <svg className="animate-spin h-12 w-12 text-indigo-500 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <svg className="animate-spin h-12 w-12 text-[color:var(--orange)] mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
           </svg>
           <h3 className="text-xl font-semibold text-gray-900">Generating Your Documents</h3>
-          <p className="text-gray-500">BizDoc AI is thinking... Please wait a moment.</p>
+          <p className="text-gray-500">Brief Doc X is thinking... Please wait a moment.</p>
         </div>
       );
     }
@@ -264,7 +264,7 @@ export const DocumentDisplay: React.FC<DocumentDisplayProps> = ({ documents, isL
                             onClick={() => handleTabClick(index)}
                             className={`${
                                 index === activeIndex
-                                    ? 'border-indigo-500 text-indigo-600'
+                                    ? 'border-[color:var(--orange)] text-[color:var(--orange-deep)]'
                                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                             } whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm transition-colors`}
                         >
@@ -282,7 +282,7 @@ export const DocumentDisplay: React.FC<DocumentDisplayProps> = ({ documents, isL
                             id="pageSize"
                             value={pdfOptions.pageSize}
                             onChange={(e) => setPdfOptions(prev => ({ ...prev, pageSize: e.target.value as PdfOptions['pageSize'] }))}
-                            className="bg-white border border-gray-300 rounded-md p-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                            className="bg-white border border-gray-300 rounded-md p-2 text-sm focus:ring-[color:var(--orange)] focus:border-[color:var(--orange)]"
                         >
                             <option value="letter">Letter</option>
                             <option value="a4">A4</option>
@@ -294,7 +294,7 @@ export const DocumentDisplay: React.FC<DocumentDisplayProps> = ({ documents, isL
                             id="orientation"
                             value={pdfOptions.orientation}
                             onChange={(e) => setPdfOptions(prev => ({ ...prev, orientation: e.target.value as PdfOptions['orientation'] }))}
-                            className="bg-white border border-gray-300 rounded-md p-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                            className="bg-white border border-gray-300 rounded-md p-2 text-sm focus:ring-[color:var(--orange)] focus:border-[color:var(--orange)]"
                         >
                             <option value="portrait">Portrait</option>
                             <option value="landscape">Landscape</option>
@@ -314,7 +314,7 @@ export const DocumentDisplay: React.FC<DocumentDisplayProps> = ({ documents, isL
                     <button
                         onClick={handleDownloadAllPdfs}
                         disabled={isDownloadingAll}
-                        className="flex w-full sm:w-auto items-center justify-center space-x-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-3 rounded-lg transition-colors disabled:bg-indigo-400 disabled:cursor-not-allowed"
+                        className="flex w-full sm:w-auto items-center justify-center space-x-2 bg-[color:var(--orange)] hover:bg-[color:var(--orange-deep)] text-white font-medium py-2 px-3 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         title="Download each document as a separate PDF sequentially"
                     >
                         {isDownloadingAll ? (

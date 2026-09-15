@@ -48,7 +48,7 @@ const App: React.FC = () => {
         companyLogo={companyLogo}
         setCompanyLogo={setCompanyLogo}
         onDocuments={() => { setPage('generator'); setView('documents'); }}
-        onImport={() => setView('import')}
+        onImport={() => { setPage('generator'); setView('import'); }}
       />
       <main className="brief-main">
         <div className="main-topline">

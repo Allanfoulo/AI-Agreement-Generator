@@ -21,12 +21,12 @@ const DocIcon: React.FC<{ type: string }> = ({ type }) => {
             break;
         case 'QUOTE':
             icon = <path strokeLinecap="round" strokeLinejoin="round" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />;
-            color = 'text-blue-500';
+            color = 'text-[color:var(--orange-deep)]';
             label = 'Quote';
             break;
         case 'SLA':
             icon = <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />;
-            color = 'text-purple-500';
+            color = 'text-[color:var(--sage)]';
             label = 'SLA';
             break;
         default:
@@ -72,7 +72,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ documentSets, onUp
     };
     
     return (
-        <>
+        <div className="studio-page">
             <div className="mb-6 border-b border-gray-200 pb-4">
                 <h1 className="text-3xl font-bold text-gray-900">Document Dashboard</h1>
                 <p className="text-gray-600 mt-1">View, edit, and manage all your saved business documents.</p>
@@ -92,14 +92,14 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ documentSets, onUp
                         <div key={docSet.id} className="bg-white rounded-xl border border-gray-200 shadow-md flex flex-col transition-all hover:shadow-lg hover:-translate-y-1">
                             <div className="p-5 flex-grow">
                                 <p className="text-xs text-gray-500 mb-2">Saved on: {formatDate(new Date(docSet.savedAt))}</p>
-                                <h3 className="font-bold text-indigo-700 text-lg truncate" title={docSet.clientCompany}>{docSet.clientCompany}</h3>
+                                <h3 className="font-bold text-[color:var(--moss)] text-lg truncate" title={docSet.clientCompany}>{docSet.clientCompany}</h3>
                                 <div className="flex flex-wrap gap-2 mt-3">
                                     {docSet.documents.map(doc => <DocIcon key={doc.type} type={doc.type} />)}
                                 </div>
                             </div>
                             <div className="p-3 bg-gray-50 border-t border-gray-200 flex justify-end space-x-2">
                                 <button onClick={() => handleDeleteRequest(docSet.id)} className="text-sm font-medium text-gray-600 hover:text-red-600 px-3 py-1 rounded-md transition-colors">Delete</button>
-                                <button onClick={() => handleEdit(docSet)} className="text-sm font-medium bg-indigo-600 text-white hover:bg-indigo-700 px-4 py-1 rounded-md transition-colors">View / Edit</button>
+                                <button onClick={() => handleEdit(docSet)} className="text-sm font-medium bg-[color:var(--orange)] text-white hover:bg-[color:var(--orange-deep)] px-4 py-1 rounded-md transition-colors">View / Edit</button>
                             </div>
                         </div>
                     ))}
@@ -127,6 +127,6 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ documentSets, onUp
                     </div>
                 </div>
             )}
-        </>
+        </div>
     );
 };

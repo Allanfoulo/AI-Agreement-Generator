@@ -67,7 +67,7 @@ export const ItemPackagesPage: React.FC<ItemPackagesPageProps> = ({ packages, se
     const total = items.reduce((sum, item) => sum + item.price, 0);
 
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+        <div className="studio-page grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
             {/* Create Package Form */}
             <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
                 <h2 className="text-2xl font-semibold mb-4 text-gray-900">Create a New Package</h2>
@@ -100,7 +100,7 @@ export const ItemPackagesPage: React.FC<ItemPackagesPageProps> = ({ packages, se
                                     <label htmlFor="itemPrice" className="block text-sm font-medium text-gray-600 mb-1">Price (R)</label>
                                     <input type="number" id="itemPrice" value={newItemPrice} onChange={(e) => setNewItemPrice(e.target.value)} placeholder="e.g., 5000" className="w-full bg-gray-50 border border-gray-300 rounded-lg p-2" />
                                 </div>
-                                <button onClick={handleAddItem} className="bg-indigo-500 text-white p-2 rounded-lg hover:bg-indigo-600 h-10"><PlusIcon /></button>
+                                <button onClick={handleAddItem} className="bg-[color:var(--orange)] text-white p-2 rounded-lg hover:bg-[color:var(--orange-deep)] h-10"><PlusIcon /></button>
                             </div>
                         </div>
                     </div>
@@ -128,7 +128,7 @@ export const ItemPackagesPage: React.FC<ItemPackagesPageProps> = ({ packages, se
 
                     <button
                         onClick={handleSavePackage}
-                        className="w-full flex items-center justify-center bg-indigo-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-indigo-700"
+                        className="w-full flex items-center justify-center bg-[color:var(--orange)] text-white font-bold py-3 px-4 rounded-lg hover:bg-[color:var(--orange-deep)]"
                     >
                         Save Package
                     </button>
@@ -147,7 +147,7 @@ export const ItemPackagesPage: React.FC<ItemPackagesPageProps> = ({ packages, se
                             return (
                                 <div key={pkg.id} className="border border-gray-200 rounded-lg p-4">
                                     <div className="flex justify-between items-center mb-3">
-                                        <h3 className="font-bold text-lg text-indigo-700">{pkg.name}</h3>
+                                        <h3 className="font-bold text-lg text-[color:var(--moss)]">{pkg.name}</h3>
                                         <button onClick={() => handleDeletePackage(pkg.id)} className="text-red-500 hover:text-red-700"><TrashIcon /></button>
                                     </div>
                                     <div className="space-y-2">

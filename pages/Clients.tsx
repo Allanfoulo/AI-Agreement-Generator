@@ -57,7 +57,7 @@ export const ClientsPage: React.FC<ClientsPageProps> = ({ clients, setClients })
 
 
     return (
-        <>
+        <div className="studio-page">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
                 {/* Create Client Form */}
                 <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
@@ -109,7 +109,7 @@ export const ClientsPage: React.FC<ClientsPageProps> = ({ clients, setClients })
                         </div>
                         <button
                             onClick={handleSaveClient}
-                            className="w-full flex items-center justify-center bg-indigo-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-indigo-700"
+                            className="w-full flex items-center justify-center bg-[color:var(--orange)] text-white font-bold py-3 px-4 rounded-lg hover:bg-[color:var(--orange-deep)]"
                         >
                             Save Client
                         </button>
@@ -127,7 +127,7 @@ export const ClientsPage: React.FC<ClientsPageProps> = ({ clients, setClients })
                                 <div key={client.id} className="border border-gray-200 rounded-lg p-4 transition-shadow hover:shadow-md">
                                     <div className="flex justify-between items-start mb-2">
                                         <div>
-                                            <h3 className="font-bold text-lg text-indigo-700">{client.company}</h3>
+                                            <h3 className="font-bold text-lg text-[color:var(--moss)]">{client.company}</h3>
                                             <p className="text-sm text-gray-600 font-medium">{client.name}</p>
                                         </div>
                                         <button onClick={() => handleDeleteRequest(client.id)} className="text-gray-400 hover:text-red-500 p-1" title="Delete Client">
@@ -174,6 +174,6 @@ export const ClientsPage: React.FC<ClientsPageProps> = ({ clients, setClients })
                     </div>
                 </div>
             )}
-        </>
+        </div>
     );
 };

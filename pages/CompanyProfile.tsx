@@ -34,7 +34,7 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({ profile,
     };
 
     return (
-        <div className="max-w-4xl mx-auto">
+        <div className="studio-page max-w-4xl mx-auto">
             <div className="bg-white p-6 sm:p-8 rounded-xl shadow-lg border border-gray-200">
                 <h1 className="text-3xl font-bold text-gray-900 mb-2">Company Profile</h1>
                 <p className="text-gray-600 mb-6">This information will be used to automatically populate your generated documents.</p>
@@ -114,7 +114,7 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({ profile,
                     <div className="flex justify-end pt-4">
                         <button
                             type="submit"
-                            className="w-full sm:w-auto flex items-center justify-center bg-indigo-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-indigo-700 disabled:bg-indigo-400 transition-colors"
+                            className="w-full sm:w-auto flex items-center justify-center bg-[color:var(--orange)] text-white font-bold py-3 px-6 rounded-lg hover:bg-[color:var(--orange-deep)] disabled:opacity-50 transition-colors"
                         >
                              {saved ? (
                                 <>
