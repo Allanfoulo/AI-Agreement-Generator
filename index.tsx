@@ -2,6 +2,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
+import './src/styles/studio.css';
 import { ConvexProvider, ConvexReactClient } from 'convex/react';
 const url = import.meta.env.VITE_CONVEX_URL;
 const convex = url ? new ConvexReactClient(url) : null;

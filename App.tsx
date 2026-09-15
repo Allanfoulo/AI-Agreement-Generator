@@ -52,8 +52,8 @@ const App: React.FC = () => {
       />
       <main className="brief-main">
         <div className="main-topline">
-          <span className="eyebrow">DOCUMENT OPERATIONS</span>
-          <span className="workspace-chip"><i /> Shared development workspace</span>
+          <span className="eyebrow">YOUR WORKSPACE <span aria-hidden="true">/</span> <strong>THE STUDIO</strong></span>
+          <span className="workspace-chip">Shared workspace</span>
         </div>
         {pending > 0 && <p role="status" className="sync-note">Saving changes...</p>}
         {error && <p role="alert" className="error-note">{error}</p>}

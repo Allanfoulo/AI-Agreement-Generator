@@ -2,40 +2,50 @@
 
 ## Direction
 
-Brief Doc X is a product workspace used by a small-business operator at a desk in daylight, moving quickly between structured records and document previews. The interface is light, warm, and grounded, with charcoal for navigation and an orange accent reserved for creation and AI actions.
+Brief Doc X is a document studio used by a small-business operator at a desk in daylight. The premium direction uses a warm paper work surface, moss navigation and introduction, sage accents, and clay actions. It adapts the user's organic-tech reference to practical document creation.
 
 ## Color strategy
 
-Committed warm accent. Paper and ink establish the workspace; burnt orange carries creation, focus, and AI affordances; sage and semantic tones communicate document state.
+Moss carries the introduction and navigation. Paper carries working surfaces; clay identifies primary actions and focus. Sage provides contrast on dark surfaces.
 
 ```css
---paper: oklch(0.985 0.008 80);
---paper-deep: oklch(0.955 0.018 78);
---ink: oklch(0.19 0.018 45);
---ink-muted: oklch(0.47 0.025 55);
---rail: oklch(0.18 0.018 45);
---orange: oklch(0.67 0.17 48);
---orange-soft: oklch(0.93 0.055 72);
---sage: oklch(0.56 0.07 165);
+--paper: oklch(0.969 0.009 85);
+--paper-deep: oklch(0.94 0.012 90);
+--ink: oklch(0.25 0.024 155);
+--ink-muted: oklch(0.49 0.019 150);
+--rail: oklch(0.305 0.035 155);
+--orange: oklch(0.54 0.145 38);
+--orange-soft: oklch(0.95 0.021 65);
+--sage: oklch(0.82 0.042 125);
 ```
 
 ## Typography
 
-Use a system sans stack for product controls and body copy. Use strong weight contrast, compact labels, and a single oversized workspace statement where useful. Avoid display fonts in controls.
+Use a system sans stack for controls and body copy, a local Palatino/Georgia serif stack for expressive headings, and Cascadia/Consolas for document identifiers. Italic serif is reserved for the introduction and brand signature. No font downloads are required.
 
 ## Layout
 
-Use a charcoal left rail, warm content canvas, asymmetric hero framing, and dense document rows. On narrow screens the rail becomes a compact top bar. Avoid nested cards; use full-width sections, dividers, and one primary surface per task.
+Use a moss left rail, warm content canvas, a serif introduction with a paper illustration, and compact document rows. On narrow screens the rail becomes a top navigation area. Use one primary surface per task.
 
 ## Components
 
-- Wordmark: “Brief Doc X” with a small orange signal mark.
+- Wordmark: “Brief Doc X” with a serif monogram in a document-shaped outline.
 - Rail navigation: Documents, Clients, Services, Employees, Company.
-- Command panel: warm outlined input with a single orange action.
+- Command panel: sage-tinted writing area with a single clay action.
 - Document row: title, type, status, amount, and PDF action.
 - Editor surface: structured fields on the left, document context on the right.
 - Status badge: accessible text plus semantic color, never color alone.
 
 ## Motion
 
-Use 150–220ms ease-out transitions for rail selection, buttons, and status reveals. Respect `prefers-reduced-motion` and never animate layout for decoration.
+Use 150–220ms ease-out transitions for rail selection, buttons, and disclosure controls. Respect `prefers-reduced-motion` and never animate layout for decoration. Avoid autoplay effects inside working forms.
+
+## Premium studio implementation
+
+- `src/styles/studio.css` owns the active tokens and component styling; original styles are contained in the legacy cascade layer.
+- Major surfaces use 24–32px radii; fields use 10px; navigation actions use pill shapes.
+- Restrict low-opacity noise to the introduction, away from working text and form controls.
+- Use a source-owned paper illustration rather than unrelated stock photography.
+- Library search, status filters, and progressive loading keep persisted documents accessible.
+- Secondary workspace records and activity sit in a keyboard-accessible disclosure.
+- Keep narrow-screen navigation and data import reachable; reduce motion on request.

@@ -1,4 +1,5 @@
 import React, { useRef } from 'react';
+import { StudioIcon } from './StudioIcon';
 
 type Page = 'generator' | 'packages' | 'clients' | 'dashboard' | 'companyProfile';
 
@@ -11,13 +12,13 @@ interface HeaderProps {
   onImport: () => void;
 }
 
-const navItems: Array<{ label: string; page: Page; mark: string }> = [
-  { label: 'Documents', page: 'generator', mark: 'D' },
-  { label: 'Dashboard', page: 'dashboard', mark: 'O' },
-  { label: 'Clients', page: 'clients', mark: 'C' },
-  { label: 'Services & packages', page: 'packages', mark: 'S' },
-  { label: 'Company profile', page: 'companyProfile', mark: 'P' },
-];
+const navItems = [
+  { label: 'Documents', page: 'generator', mark: 'document' },
+  { label: 'Dashboard', page: 'dashboard', mark: 'dashboard' },
+  { label: 'Clients', page: 'clients', mark: 'clients' },
+  { label: 'Services & packages', page: 'packages', mark: 'services' },
+  { label: 'Company profile', page: 'companyProfile', mark: 'company' },
+] as const;
 
 export const Header: React.FC<HeaderProps> = ({ setPage, currentPage, companyLogo, setCompanyLogo, onDocuments, onImport }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -53,7 +54,7 @@ export const Header: React.FC<HeaderProps> = ({ setPage, currentPage, companyLog
             onClick={() => { setPage(item.page); if (item.page === 'generator') onDocuments(); }}
             className={`rail-link ${currentPage === item.page ? 'is-active' : ''}`}
           >
-            <span className="rail-link-mark" aria-hidden="true">{item.mark}</span>
+            <StudioIcon name={item.mark} className="rail-link-mark" />
             <span>{item.label}</span>
           </button>
         ))}
