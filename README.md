@@ -2,9 +2,9 @@
 <img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
 </div>
 
-# BizDoc X
+# Brief Doc X
 
-BizDoc X is a structured business-document workspace. Convex is the backend and source of truth; browser storage is used only as an explicit legacy-import source.
+Brief Doc X is a structured business-document workspace. Convex is the backend and source of truth; browser storage is used only as an explicit legacy-import source.
 
 Convex is started separately so backend functions can be validated locally.
 

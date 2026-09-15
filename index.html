@@ -3,41 +3,113 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>BizDoc AI: Agreement Generator</title>
+    <title>Brief Doc X - Business document studio</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"></noscript>
     <style>
-      body {
-        font-family: 'Inter', sans-serif;
-      }
-
-      /* Styles for editable content */
-      [contenteditable="true"] {
-        outline: none; /* Remove default browser outline */
-        border: 1px dashed #A0AEC0; /* Subtle dashed border for identification */
-        padding: 4px;
-        border-radius: 4px;
-        transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
-        cursor: text;
-        display: block; /* Ensure paragraphs and other elements take up full width for easier clicking */
-      }
-
-      [contenteditable="true"]:hover {
-        background-color: #EDF2F7; /* Slightly lighter background on hover */
-        border-color: #718096; /* More visible border on hover */
-      }
-
-      [contenteditable="true"]:focus {
-        background-color: #EBF4FF;
-        border-color: #6366f1; /* Indigo color to match theme on focus */
-        border-style: solid;
-      }
+      :root { --paper: oklch(0.985 0.008 80); --paper-deep: oklch(0.955 0.018 78); --surface: oklch(0.998 0.003 80); --ink: oklch(0.19 0.018 45); --ink-muted: oklch(0.47 0.025 55); --rail: oklch(0.18 0.018 45); --orange: oklch(0.67 0.17 48); --orange-deep: oklch(0.57 0.16 43); --orange-soft: oklch(0.93 0.055 72); --sage: oklch(0.56 0.07 165); --line: oklch(0.88 0.018 78); }
+      * { box-sizing: border-box; }
+      body { margin: 0; background: var(--paper); color: var(--ink); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif; }
+      button, input, textarea, select { font: inherit; }
+      button { cursor: pointer; }
+      button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible, a:focus-visible { outline: 3px solid color-mix(in oklch, var(--orange) 70%, var(--surface)); outline-offset: 3px; }
+      .brief-shell { min-height: 100vh; display: flex; background: var(--paper); }
+      .app-rail { width: 248px; min-height: 100vh; display: flex; flex-direction: column; padding: 25px 16px 18px; background: var(--rail); color: oklch(0.95 0.01 80); }
+      .rail-brand { display: flex; align-items: center; gap: 11px; padding: 0 9px 30px; }
+      .brand-signal { width: 30px; height: 30px; display: grid; place-items: center; border-radius: 9px; background: var(--orange); color: var(--rail); font-size: 16px; font-weight: 800; }
+      .brand-name { font-size: 15px; font-weight: 700; letter-spacing: -0.02em; }
+      .brand-caption { margin-top: 2px; color: oklch(0.70 0.018 75); font-size: 10px; }
+      .rail-create { display: flex; align-items: center; gap: 9px; width: 100%; margin-bottom: 28px; padding: 11px 13px; border: 1px solid color-mix(in oklch, var(--orange) 60%, var(--rail)); border-radius: 9px; background: var(--orange); color: var(--rail); font-size: 12px; font-weight: 700; text-align: left; transition: transform 180ms ease-out, background 180ms ease-out; }
+      .rail-create:hover { background: oklch(0.72 0.16 50); transform: translateY(-1px); }
+      .rail-create-plus { font-size: 18px; line-height: 12px; }
+      .rail-label { padding: 0 10px 9px; color: oklch(0.58 0.018 75); font-size: 10px; font-weight: 700; letter-spacing: 0.13em; text-transform: uppercase; }
+      .rail-nav { display: grid; gap: 4px; }
+      .rail-link, .rail-secondary { display: flex; align-items: center; gap: 11px; width: 100%; padding: 10px; border: 0; border-radius: 8px; background: transparent; color: oklch(0.78 0.014 75); font-size: 12px; text-align: left; transition: background 180ms ease-out, color 180ms ease-out; }
+      .rail-link:hover, .rail-secondary:hover { background: oklch(0.25 0.02 48); color: oklch(0.98 0.006 80); }
+      .rail-link.is-active { background: oklch(0.26 0.02 48); color: oklch(0.99 0.005 80); box-shadow: inset 3px 0 0 var(--orange); }
+      .rail-link-mark { width: 18px; color: oklch(0.60 0.02 75); font-size: 10px; font-weight: 800; text-align: center; }
+      .rail-link.is-active .rail-link-mark { color: var(--orange); }
+      .rail-spacer { flex: 1; }
+      .rail-secondary { margin-bottom: 18px; color: oklch(0.68 0.018 75); }
+      .rail-profile { display: flex; align-items: center; gap: 9px; padding: 13px 8px 0; border-top: 1px solid oklch(0.29 0.018 48); }
+      .profile-avatar { width: 30px; height: 30px; display: grid; place-items: center; overflow: hidden; border-radius: 50%; background: oklch(0.33 0.03 48); color: var(--orange); font-size: 10px; font-weight: 800; }
+      .profile-avatar img { width: 100%; height: 100%; object-fit: cover; }
+      .profile-copy { display: grid; gap: 3px; min-width: 0; }
+      .profile-name { overflow: hidden; color: oklch(0.90 0.01 80); font-size: 11px; text-overflow: ellipsis; white-space: nowrap; }
+      .profile-status { color: oklch(0.58 0.02 75); font-size: 9px; }
+      .profile-status i, .workspace-chip i { display: inline-block; width: 6px; height: 6px; margin-right: 4px; border-radius: 50%; background: var(--sage); }
+      .profile-menu { margin-left: auto; border: 0; background: transparent; color: oklch(0.58 0.02 75); font-size: 13px; }
+      .rail-remove-logo { margin: 10px 8px 0; border: 0; background: transparent; color: var(--orange); font-size: 10px; text-align: left; }
+      .brief-main { flex: 1; min-width: 0; max-width: 1500px; padding: 27px clamp(24px, 5vw, 74px) 70px; }
+      .main-topline { display: flex; align-items: center; justify-content: space-between; margin-bottom: 38px; }
+      .eyebrow { color: var(--ink-muted); font-size: 10px; font-weight: 800; letter-spacing: 0.16em; }
+      .workspace-chip { color: var(--ink-muted); font-size: 11px; }
+      .sync-note, .error-note { margin: 0 0 14px; padding: 10px 13px; border-radius: 8px; background: var(--orange-soft); color: var(--orange-deep); font-size: 12px; }
+      .error-note { background: oklch(0.95 0.03 25); color: oklch(0.42 0.12 28); }
+      .connection-state { min-height: 100vh; display: grid; place-items: center; margin: 0; background: var(--paper); color: var(--ink-muted); }
+      .workspace-hero { position: relative; display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(280px, 0.7fr); gap: 35px; align-items: end; margin: -3px 0 34px; padding: 30px 0 33px; border-bottom: 1px solid var(--line); }
+      .workspace-hero::before { position: absolute; top: -27px; left: -74px; width: 280px; height: 1px; background: color-mix(in oklch, var(--orange) 55%, transparent); content: ''; }
+      .hero-kicker { margin: 0 0 15px; color: var(--orange-deep); font-size: 11px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; }
+      .workspace-hero h1 { max-width: 680px; margin: 0; font-size: clamp(34px, 4vw, 61px); font-weight: 650; letter-spacing: -0.065em; line-height: 0.98; }
+      .hero-copy { max-width: 360px; margin: 0 0 4px auto; color: var(--ink-muted); font-size: 13px; line-height: 1.65; }
+      .section-kicker { color: var(--ink-muted); font-size: 10px; font-weight: 800; letter-spacing: 0.13em; text-transform: uppercase; }
+      .section-title { margin: 5px 0 0; font-size: 22px; letter-spacing: -0.04em; }
+      .document-grid { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(300px, 0.85fr); gap: 20px; align-items: start; }
+      .paper-panel { border: 1px solid var(--line); border-radius: 13px; background: color-mix(in oklch, var(--surface) 88%, var(--paper)); box-shadow: 0 10px 30px color-mix(in oklch, var(--ink) 6%, transparent); }
+      .panel-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 19px 21px; border-bottom: 1px solid var(--line); }
+      .panel-heading h2 { margin: 0; font-size: 16px; letter-spacing: -0.03em; }
+      .panel-heading p { margin: 4px 0 0; color: var(--ink-muted); font-size: 11px; }
+      .assistant-panel { margin-bottom: 20px; border-color: color-mix(in oklch, var(--orange) 36%, var(--line)); background: var(--orange-soft); }
+      .assistant-panel .panel-heading { border-bottom-color: color-mix(in oklch, var(--orange) 22%, var(--line)); }
+      .assistant-mark { display: grid; width: 30px; height: 30px; place-items: center; border-radius: 50%; background: var(--orange); color: var(--rail); font-size: 13px; font-weight: 800; }
+      .assistant-body { padding: 17px 21px 20px; }
+      .assistant-body textarea { min-height: 94px; border-color: color-mix(in oklch, var(--orange) 28%, var(--line)); background: color-mix(in oklch, var(--surface) 75%, var(--orange-soft)); }
+      .assistant-actions { display: flex; align-items: center; gap: 13px; margin-top: 12px; }
+      .assistant-hint { color: var(--ink-muted); font-size: 10px; }
+      .form-panel { overflow: hidden; }
+      .form-body { display: grid; gap: 15px; padding: 20px 21px 23px; }
+      .brief-label { display: grid; gap: 6px; color: var(--ink-muted); font-size: 11px; font-weight: 700; }
+      .brief-input, .brief-select, .brief-textarea { width: 100%; border: 1px solid var(--line); border-radius: 7px; background: var(--surface); color: var(--ink); font-size: 13px; }
+      .brief-input, .brief-select { min-height: 40px; padding: 0 11px; }
+      .brief-textarea { padding: 11px; line-height: 1.5; resize: vertical; }
+      .line-editor { display: grid; gap: 9px; padding-top: 4px; }
+      .line-editor-head { display: flex; align-items: center; justify-content: space-between; color: var(--ink-muted); font-size: 10px; font-weight: 800; letter-spacing: 0.09em; text-transform: uppercase; }
+      .line-row { display: grid; grid-template-columns: minmax(0, 1.4fr) 0.55fr 0.75fr; gap: 7px; }
+      .button-primary, .button-quiet, .button-link { border: 0; border-radius: 7px; font-size: 12px; font-weight: 750; transition: transform 180ms ease-out, background 180ms ease-out, color 180ms ease-out; }
+      .button-primary { padding: 11px 15px; background: var(--orange); color: var(--rail); }
+      .button-primary:hover { background: oklch(0.72 0.16 50); transform: translateY(-1px); }
+      .button-quiet { padding: 8px 11px; background: var(--paper-deep); color: var(--ink); }
+      .button-quiet:hover { background: color-mix(in oklch, var(--paper-deep) 70%, var(--orange-soft)); }
+      .button-link { padding: 0; background: transparent; color: var(--orange-deep); }
+      .button-link:hover { color: var(--ink); }
+      .documents-panel { overflow: hidden; }
+      .document-list { display: grid; }
+      .document-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; padding: 16px 21px; border-bottom: 1px solid var(--line); }
+      .document-row:last-child { border-bottom: 0; }
+      .document-row:hover { background: color-mix(in oklch, var(--orange-soft) 22%, transparent); }
+      .document-title { overflow: hidden; margin: 0; font-size: 13px; font-weight: 750; text-overflow: ellipsis; white-space: nowrap; }
+      .document-meta { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 6px; color: var(--ink-muted); font-size: 10px; }
+      .status-dot { display: inline-flex; align-items: center; gap: 5px; }
+      .status-dot::before { width: 6px; height: 6px; border-radius: 50%; background: var(--sage); content: ''; }
+      .status-dot.draft::before { background: var(--ink-muted); }
+      .status-dot.pending::before { background: var(--orange); }
+      .document-actions { display: flex; align-items: center; justify-content: flex-end; gap: 8px; }
+      .document-amount { color: var(--ink); font-size: 12px; font-weight: 750; text-align: right; }
+      .pdf-state { margin-top: 8px; color: var(--ink-muted); font-size: 10px; }
+      .pdf-state a { color: var(--orange-deep); font-weight: 750; text-decoration: none; }
+      .pdf-state a:hover { text-decoration: underline; }
+      .jobs-panel { margin-top: 20px; }
+      .jobs-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 21px; padding: 10px 21px 15px; }
+      .job-row { padding: 9px 0; border-bottom: 1px solid var(--line); color: var(--ink-muted); font-size: 10px; }
+      .job-row a { color: var(--orange-deep); text-decoration: none; }
+      .empty-copy { padding: 25px 21px; color: var(--ink-muted); font-size: 12px; }
+      @media (max-width: 940px) { .app-rail { width: 205px; } .brief-main { padding-right: 28px; padding-left: 28px; } .workspace-hero, .document-grid { grid-template-columns: 1fr; } .hero-copy { margin: 0; } }
+      @media (max-width: 660px) { .brief-shell { display: block; } .app-rail { width: 100%; min-height: auto; padding: 15px; } .rail-brand { padding-bottom: 15px; } .rail-create { margin-bottom: 14px; } .rail-label, .rail-spacer, .rail-secondary, .rail-profile, .rail-remove-logo { display: none; } .rail-nav { display: flex; overflow-x: auto; gap: 5px; } .rail-link { width: auto; flex: 0 0 auto; padding: 8px 10px; white-space: nowrap; } .rail-link.is-active { box-shadow: inset 0 -3px 0 var(--orange); } .brief-main { padding: 21px 16px 45px; } .main-topline { margin-bottom: 23px; } .workspace-hero { padding-top: 5px; } .workspace-hero h1 { font-size: 38px; } .line-row { grid-template-columns: 1fr 0.7fr; } .line-row input:first-child { grid-column: 1 / -1; } .jobs-list { grid-template-columns: 1fr; } }
+      [contenteditable="true"] { outline: none; border: 1px dashed var(--line); padding: 4px; border-radius: 4px; transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out; cursor: text; display: block; }
+      [contenteditable="true"]:hover { background-color: var(--paper-deep); border-color: var(--ink-muted); }
+      [contenteditable="true"]:focus { background-color: var(--orange-soft); border-color: var(--orange); border-style: solid; }
     </style>
-</head>
-  <body class="bg-gray-100 text-gray-800">
+  </head>
+  <body>
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>
   </body>

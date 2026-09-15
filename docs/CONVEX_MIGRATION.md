@@ -1,6 +1,6 @@
 # Convex migration status
 
-BizDoc X now uses Convex for the live workspace, business records, realtime document queries, event log/audit delivery, immutable issued versions, PDF jobs, storage URLs, catalog data, and legacy imports. No Supabase client or browser AI provider remains in the active application.
+Brief Doc X now uses Convex for the live workspace, business records, realtime document queries, event log/audit delivery, immutable issued versions, PDF jobs, storage URLs, catalog data, and legacy imports. No Supabase client or browser AI provider remains in the active application.
 
 ## Implemented phases
 

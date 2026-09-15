@@ -1,6 +1,6 @@
 # PDF rendering
 
-BizDoc X renders issued documents through the PDFCN/Takumi approach:
+Brief Doc X renders issued documents through the PDFCN/Takumi approach:
 
 - The source-owned template lives in `src/pdf/templates/structured-document.tsx`.
 - `takumi-pdf` provides JSX-to-PDF rendering, A4 pagination, selectable text, and page primitives.
@@ -10,4 +10,4 @@ BizDoc X renders issued documents through the PDFCN/Takumi approach:
 
 The Takumi WebAssembly asset is pinned through `TAKUMI_WASM_URL`. The default points to the installed `takumi-pdf` version. Set the Convex environment variable to an internal asset URL in deployments that do not allow outbound fetches.
 
-PDFCN is distributed as copyable registry source rather than a runtime package. The implementation follows the official PDFCN registry model while keeping BizDoc-specific document structure and styling in the repository.
+PDFCN is distributed as copyable registry source rather than a runtime package. The implementation follows the official PDFCN registry model while keeping Brief Doc X-specific document structure and styling in the repository.

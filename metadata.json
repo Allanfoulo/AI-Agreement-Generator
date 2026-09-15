@@ -1,5 +1,5 @@
 {
-  "name": "BizDoc AI: Agreement Generator",
-  "description": "An AI-powered application to dynamically generate modular business documents like Service Level Agreements (SLAs), Quotes, and Invoices using a powerful system prompt with the Gemini API.",
+  "name": "Brief Doc X",
+  "description": "A structured business-document workspace for creating quotes, invoices, service-level agreements, and employee letters.",
   "requestFramePermissions": []
 }

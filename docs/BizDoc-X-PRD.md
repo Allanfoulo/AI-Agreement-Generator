@@ -1,4 +1,4 @@
-# BizDoc X
+# Brief Doc X
 
 ## Product Requirements Document and Implementation Blueprint
 
@@ -14,7 +14,7 @@
 
 ## 1. Executive Summary
 
-BizDoc X is an AI-assisted business-document workspace for service businesses. It turns reusable company, client, employee, and service data into professional quotes, invoices, employee letters, and service-level agreements.
+Brief Doc X is an AI-assisted business-document workspace for service businesses. It turns reusable company, client, employee, and service data into professional quotes, invoices, employee letters, and service-level agreements.
 
 The product is not an AI text box that emits arbitrary HTML. It is a structured document system:
 

@@ -22,7 +22,7 @@ export function StructuredDocument({ model }: { model: DocumentRenderModel }) {
       <header style={{ borderBottom: `3px solid ${accent}`, paddingBottom: 18, marginBottom: 22 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', gap: 24 }}>
           <div>
-            <div style={{ color: accent, fontSize: 24, fontWeight: 700 }}>{model.company.name || 'BizDoc X'}</div>
+            <div style={{ color: accent, fontSize: 24, fontWeight: 700 }}>{model.company.name || 'Brief Doc X'}</div>
             <div style={{ color: muted, whiteSpace: 'pre-wrap' }}>{model.company.address}</div>
           </div>
           <div style={{ textAlign: 'right' }}>
@@ -84,5 +84,5 @@ export function StructuredDocument({ model }: { model: DocumentRenderModel }) {
 }
 
 export function documentFooter() {
-  return <div style={{ borderTop, color: muted, display: 'flex', justifyContent: 'space-between', paddingTop: 6, width: '100%' }}>BizDoc X - Authoritative issued artifact <span>Page <PageNumber /> of <TotalPages /></span></div>;
+  return <div style={{ borderTop, color: muted, display: 'flex', justifyContent: 'space-between', paddingTop: 6, width: '100%' }}>Brief Doc X - Authoritative issued artifact <span>Page <PageNumber /> of <TotalPages /></span></div>;
 }
