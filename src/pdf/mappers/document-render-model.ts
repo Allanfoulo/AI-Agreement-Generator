@@ -1,4 +1,4 @@
-import type { DocumentRenderModel } from '../contracts/render-model';
+import type { DocumentRenderModel, PaymentMethod } from '../contracts/render-model';
 import { calculateFinancialDocument } from '../../domain/financial/money.ts';
 
 type SnapshotLine = {
@@ -22,8 +22,9 @@ type IssuedVersion = {
     currency: string;
     lines: SnapshotLine[];
     sections: Array<{ heading: string; body: string }>;
+    paymentMethod?: PaymentMethod;
   };
-  company: { companyName: string; address: string; repName: string; repTitle: string };
+  company: { companyName: string; address: string; repName: string; repTitle: string; bankName?: string; accountName?: string; accountNumber?: string; branchCode?: string; accountType?: string; swiftCode?: string; mobileWalletProvider?: string; mobileWalletNumber?: string; mobileWalletName?: string };
   recipient: { name: string; company: string; address: string };
   type: DocumentRenderModel['type'];
 };
@@ -51,6 +52,11 @@ export function toDocumentRenderModel(version: IssuedVersion): DocumentRenderMod
       address: version.company.address,
       representative: version.company.repName,
       representativeTitle: version.company.repTitle,
+    },
+    payment: {
+      method: version.snapshot.paymentMethod ?? 'none',
+      bank: { bankName: version.company.bankName ?? '', accountName: version.company.accountName ?? '', accountNumber: version.company.accountNumber ?? '', branchCode: version.company.branchCode ?? '', accountType: version.company.accountType ?? '', swiftCode: version.company.swiftCode ?? '' },
+      mobileWallet: { provider: version.company.mobileWalletProvider ?? '', number: version.company.mobileWalletNumber ?? '', name: version.company.mobileWalletName ?? '' },
     },
     recipient: version.recipient,
     lines: version.snapshot.lines.map((line, index) => ({

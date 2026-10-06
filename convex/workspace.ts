@@ -3,11 +3,18 @@ import { v } from 'convex/values';
 import { profile, recipient, client, itemPackage, legacySet } from './validators';
 import { recordEvent, requireDevelopment } from './events';
 
-export const emptyProfile = { repName: '', repTitle: '', companyName: '', address: '', phone: '', email: '', bankName: '', accountName: '', accountNumber: '', branchCode: '', accountType: '', swiftCode: '' };
+export const emptyProfile = { repName: '', repTitle: '', companyName: '', address: '', phone: '', email: '', bankName: '', accountName: '', accountNumber: '', branchCode: '', accountType: '', swiftCode: '', mobileWalletProvider: '', mobileWalletNumber: '', mobileWalletName: '' };
+function normalizeProfile(value?: Partial<typeof emptyProfile>) {
+  return {
+    repName: value?.repName ?? '', repTitle: value?.repTitle ?? '', companyName: value?.companyName ?? '', address: value?.address ?? '', phone: value?.phone ?? '', email: value?.email ?? '',
+    bankName: value?.bankName ?? '', accountName: value?.accountName ?? '', accountNumber: value?.accountNumber ?? '', branchCode: value?.branchCode ?? '', accountType: value?.accountType ?? '', swiftCode: value?.swiftCode ?? '',
+    mobileWalletProvider: value?.mobileWalletProvider ?? '', mobileWalletNumber: value?.mobileWalletNumber ?? '', mobileWalletName: value?.mobileWalletName ?? '',
+  };
+}
 export const read = query({ args: {}, handler: async ctx => {
   requireDevelopment();
   const workspace = await ctx.db.query('workspace').withIndex('by_key', q => q.eq('key', 'default')).unique();
-  return { profile: workspace?.profile ?? emptyProfile, recipient: workspace?.recipient ?? { name: '', company: '', address: '' }, logo: workspace?.logo ?? null, revision: workspace?.revision ?? 0,
+  return { profile: normalizeProfile(workspace?.profile), recipient: workspace?.recipient ?? { name: '', company: '', address: '' }, logo: workspace?.logo ?? null, revision: workspace?.revision ?? 0,
     clients: (await ctx.db.query('clients').take(1000)).map(r => r.data), packages: (await ctx.db.query('packages').take(1000)).map(r => r.data),
     documents: (await ctx.db.query('legacyDocuments').order('desc').take(1000)).filter(r => !r.archived).map(r => ({ ...r.data, revision: r.revision })) };
 }});
@@ -35,7 +42,7 @@ export const update = mutation({ args: { profile: v.optional(profile), recipient
   const row = await ctx.db.query('workspace').withIndex('by_key', q => q.eq('key', 'default')).unique();
   if ((row?.revision ?? 0) !== args.expectedRevision) throw new Error('Workspace changed. Reload and retry.');
   if (args.logo && args.logo.length > 500000) throw new Error('Logo must be smaller than 500 KB.');
-  const data = { key: 'default', profile: args.profile ?? row?.profile ?? emptyProfile, recipient: args.recipient ?? row?.recipient ?? { name: '', company: '', address: '' }, logo: args.logo === undefined ? row?.logo ?? null : args.logo, revision: args.expectedRevision + 1 };
+  const data = { key: 'default', profile: normalizeProfile(args.profile ?? row?.profile), recipient: args.recipient ?? row?.recipient ?? { name: '', company: '', address: '' }, logo: args.logo === undefined ? row?.logo ?? null : args.logo, revision: args.expectedRevision + 1 };
   if (row) await ctx.db.patch(row._id, data); else await ctx.db.insert('workspace', data);
   await recordEvent(ctx, 'WorkspaceUpdated', 'default');
 }});

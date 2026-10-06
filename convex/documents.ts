@@ -39,8 +39,15 @@ export const issue = mutation({ args: { id: v.id('documents'), expectedRevision:
   requireDevelopment();
   const doc = await ctx.db.get(id);
   if (!doc || doc.revision !== expectedRevision || doc.status !== 'draft') throw new Error('Only the current draft can be issued.');
-  const company = (await ctx.db.query('workspace').withIndex('by_key', q => q.eq('key', 'default')).unique())?.profile ?? emptyProfile;
+  const storedCompany = (await ctx.db.query('workspace').withIndex('by_key', q => q.eq('key', 'default')).unique())?.profile;
+  const company = { ...emptyProfile, ...storedCompany };
   if (!company.companyName.trim()) throw new Error('Complete the company profile first.');
+  const paymentMethod = doc.content.paymentMethod ?? 'none';
+  if (!['quote', 'invoice'].includes(doc.type) && paymentMethod !== 'none') throw new Error('Payment details are only available on quotes and invoices.');
+  const hasBankDetails = Boolean(company.bankName.trim() && company.accountName.trim() && company.accountNumber.trim());
+  const hasWalletDetails = Boolean(company.mobileWalletProvider?.trim() && company.mobileWalletNumber?.trim() && company.mobileWalletName?.trim());
+  if ((paymentMethod === 'bank' || paymentMethod === 'bank_and_mobile_wallet') && !hasBankDetails) throw new Error('Complete the bank details before issuing this document.');
+  if ((paymentMethod === 'mobile_wallet' || paymentMethod === 'bank_and_mobile_wallet') && !hasWalletDetails) throw new Error('Complete the mobile wallet details before issuing this document.');
   if (!/^\d{4}-\d{2}-\d{2}$/.test(doc.content.issueDate) || !Number.isFinite(Date.parse(doc.content.issueDate))) throw new Error('Valid issue date required.');
   if (doc.content.dueDate && doc.content.dueDate < doc.content.issueDate) throw new Error('Due date precedes issue date.');
   if (doc.content.validUntil && doc.content.validUntil < doc.content.issueDate) throw new Error('Validity date precedes issue date.');

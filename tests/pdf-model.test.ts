@@ -33,6 +33,17 @@ test('render mapper supports non-financial narrative documents without inventing
   assert.equal(model.sections[0].body, 'Within four hours.');
 });
 
+test('render mapper snapshots the selected mobile wallet payment details', () => {
+  const model = toDocumentRenderModel({
+    type: 'quote', number: 'QT-000001', revision: 1, totalMinor: 25000,
+    snapshot: { title: 'Wallet quote', issueDate: '2026-09-15', currency: 'LSL', templateKey: 'quote/modern@1', paymentMethod: 'mobile_wallet', lines: [{ id: 'line-1', name: 'Materials', quantityMilli: 1000, unitPriceMinor: 25000 }], sections: [] },
+    company: { companyName: 'Brief Doc X', address: 'HQ', repName: 'A. Owner', repTitle: 'Director', bankName: '', accountName: '', accountNumber: '', branchCode: '', accountType: '', swiftCode: '', mobileWalletProvider: 'EcoCash', mobileWalletNumber: '+266 5000 0000', mobileWalletName: 'Brief Doc X' },
+    recipient: { name: 'Client', company: 'Client Co', address: 'Client address' },
+  });
+  assert.equal(model.payment.method, 'mobile_wallet');
+  assert.deepEqual(model.payment.mobileWallet, { provider: 'EcoCash', number: '+266 5000 0000', name: 'Brief Doc X' });
+});
+
 test('normalizes supported template families per document type', async () => {
   const { normalizeTemplateKey, templateFamilyFromKey } = await import('../src/pdf/templates/template-registry.ts');
   assert.equal(normalizeTemplateKey('invoice', 'invoice/minimal@1'), 'invoice/minimal@1');

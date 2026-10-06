@@ -19,6 +19,8 @@ export function StructuredDocument({ model }: { model: DocumentRenderModel }) {
   const family = (model.templateKey.split('/')[1]?.split('@')[0] ?? 'modern') as keyof typeof templates;
   const theme = templates[family] ?? templates.modern;
   const minimal = family === 'minimal';
+  const showBank = model.payment.method === 'bank' || model.payment.method === 'bank_and_mobile_wallet';
+  const showWallet = model.payment.method === 'mobile_wallet' || model.payment.method === 'bank_and_mobile_wallet';
   return (
     <main style={{ color: theme.ink, fontFamily: 'Arial, sans-serif', fontSize: 11, lineHeight: 1.45, padding: 0 }}>
       <header style={{ borderBottom: `${family === 'minimal' ? 1 : family === 'corporate' ? 4 : 3}px solid ${theme.accent}`, paddingBottom: family === 'minimal' ? 14 : 18, marginBottom: 22 }}>
@@ -70,6 +72,14 @@ export function StructuredDocument({ model }: { model: DocumentRenderModel }) {
       <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 26 }}>
         <div style={{ borderTop: `${minimal ? 1 : 2}px solid ${theme.accent}`, minWidth: 220, paddingTop: 10, textAlign: 'right' }}><span style={{ color: theme.muted, marginRight: 24 }}>Total</span><strong>{money(model.totalMinor, model.currency)}</strong></div>
       </div>
+
+      {(showBank || showWallet) && <section style={{ backgroundColor: minimal ? 'transparent' : theme.wash, border: minimal ? `1px solid ${theme.accent}` : theme.border, borderRadius: theme.radius, padding: 14, marginBottom: 22 }}>
+        <div style={{ color: theme.accent, fontSize: 9, fontWeight: 700, letterSpacing: 1, marginBottom: 8, textTransform: 'uppercase' }}>Payment details</div>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 24 }}>
+          {showBank && <div style={{ minWidth: 190 }}><div style={{ fontWeight: 700, marginBottom: 4 }}>Bank transfer</div><div>{model.payment.bank.bankName}</div><div>Account name: {model.payment.bank.accountName}</div><div>Account number: {model.payment.bank.accountNumber}</div>{model.payment.bank.branchCode && <div>Branch code: {model.payment.bank.branchCode}</div>}{model.payment.bank.accountType && <div>Account type: {model.payment.bank.accountType}</div>}{model.payment.bank.swiftCode && <div>SWIFT: {model.payment.bank.swiftCode}</div>}</div>}
+          {showWallet && <div style={{ minWidth: 190 }}><div style={{ fontWeight: 700, marginBottom: 4 }}>Mobile wallet</div><div>Provider: {model.payment.mobileWallet.provider}</div><div>Number: {model.payment.mobileWallet.number}</div><div>Account name: {model.payment.mobileWallet.name}</div><div style={{ color: theme.muted, fontSize: 9, marginTop: 6 }}>Confirm the recipient name in your wallet app before payment.</div></div>}
+        </div>
+      </section>}
 
       {model.sections.map(section => (
         <section key={section.heading} style={{ breakInside: 'avoid', marginBottom: 16 }}>

@@ -1,3 +1,5 @@
+@import "tailwindcss";
+
 /* Brief Doc X: paper, moss, and clay. Component styles extend the legacy shell. */
 :root {
   --paper: oklch(0.969 0.009 85);
@@ -88,13 +90,19 @@ button:focus-visible, a:focus-visible, summary:focus-visible, input:focus-visibl
 .brief-input, .brief-select { min-height: 43px; padding: 0 13px; }
 .brief-input:hover, .brief-select:hover, .brief-textarea:hover { border-color: oklch(0.7 0.025 140); }
 .brief-input::placeholder, .brief-textarea::placeholder { color: var(--ink-muted); opacity: 1; }
+.form-help { color: var(--ink-muted); font-size: 10px; font-weight: 400; }
+.payment-preview { display: grid; gap: 4px; padding: 13px 15px; border: 1px solid var(--line); border-radius: 12px; background: var(--paper-deep); color: var(--ink-muted); font-size: 10px; }
+.payment-preview strong { color: var(--ink); font-size: 11px; }
+.payment-preview .button-link { justify-self: start; margin-top: 3px; }
 .button-primary, .button-quiet { min-height: 40px; padding: 10px 17px; border-radius: 30px; font-size: 11px; font-weight: 600; }
 .button-primary { background: var(--orange); color: var(--surface); }
 .button-primary:not(:disabled):hover { background: var(--orange-deep); transform: translateY(-1px); }
 .button-primary:disabled:hover { background: var(--orange); transform: none; }
 .button-link { font-size: 11px; font-weight: 500; }
 .button-primary:active, .button-quiet:active, .rail-create:active { transform: scale(.98); }
-.line-editor-head { font-size: 9px; font-weight: 500; }
+.line-editor-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 9px; font-weight: 500; }
+.line-editor-actions { display: flex; align-items: center; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
+.line-editor-actions .brief-select { min-height: 32px; width: auto; max-width: 180px; padding: 0 9px; font-size: 10px; }
 .template-picker { min-width: 0; margin: 0; padding: 0; border: 0; }
 .template-picker legend { margin-bottom: 10px; color: var(--ink); font-size: 11px; font-weight: 500; }
 .template-options { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
@@ -157,6 +165,10 @@ button:focus-visible, a:focus-visible, summary:focus-visible, input:focus-visibl
 .brief-main .border-gray-200, .brief-main .border-gray-300 { border-color: var(--line); }
 .brief-main .text-gray-900, .brief-main .text-gray-800 { color: var(--ink); }
 .brief-main .text-gray-500, .brief-main .text-gray-600, .brief-main .text-gray-700 { color: var(--ink-muted); }
+.profile-required { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin: 0 25px 17px; padding: 13px 15px; border: 1px solid color-mix(in oklch, var(--orange) 32%, var(--line)); border-radius: 12px; background: var(--orange-soft); color: var(--ink); font-size: 11px; }
+.profile-required div { display: grid; gap: 3px; }
+.profile-required span { color: var(--ink-muted); font-size: 10px; }
+.profile-required button { flex-shrink: 0; }
 .brief-main .text-2xl { font-family: var(--serif); font-weight: 400; }
 .studio-page { color: var(--ink); }
 .studio-page > .grid { gap: 24px; }
@@ -189,3 +201,4 @@ button:focus-visible, a:focus-visible, summary:focus-visible, input:focus-visibl
 @media (max-width: 480px) { .workspace-hero { grid-template-columns: 1fr; } .hero-art { display: none; } .workspace-hero h1 { font-size: 38px; } .hero-copy { font-size: 12px; } .workspace-chip { font-size: 9px; padding: 7px 9px; } .eyebrow { font-size: 8px; gap: 8px; } .panel-heading, .document-row { padding-inline: 18px; } .assistant-body, .form-body { padding-inline: 18px; } .library-tools, .library-footer { padding-inline: 18px; } .document-amount { font-size: 10px; } .document-actions { max-width: 105px; } .line-row { grid-template-columns: 1fr 1fr; } .brief-input, .brief-select, .brief-textarea { font-size: 16px; } .jobs-list { grid-template-columns: 1fr; } }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { animation: none !important; transition: none !important; } }
 @media (max-width: 540px) { .template-options { grid-template-columns: 1fr; } .template-option { min-height: 68px; display: grid; grid-template-columns: 70px minmax(0, 1fr) auto; align-items: center; gap: 10px; } .conversion-template { grid-template-columns: 1fr; gap: 10px; } .conversion-template > span { padding-bottom: 0; } .conversion-actions { justify-items: start; } }
+@media (max-width: 540px) { .profile-required { align-items: flex-start; flex-direction: column; } }

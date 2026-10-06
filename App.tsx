@@ -14,7 +14,7 @@ export interface Client extends ClientDetails { id: string; notes: string; }
 export interface Item { name: string; description: string; price: number; }
 export interface ItemPackage { id: string; name: string; items: Item[]; }
 export interface SavedDocumentSet { id: string; savedAt: string; clientCompany: string; documents: Document[]; }
-export interface CompanyProfile { repName: string; repTitle: string; companyName: string; address: string; phone: string; email: string; bankName: string; accountName: string; accountNumber: string; branchCode: string; accountType: string; swiftCode: string; }
+export interface CompanyProfile { repName: string; repTitle: string; companyName: string; address: string; phone: string; email: string; bankName: string; accountName: string; accountNumber: string; branchCode: string; accountType: string; swiftCode: string; mobileWalletProvider: string; mobileWalletNumber: string; mobileWalletName: string; }
 
 type Page = 'generator' | 'packages' | 'clients' | 'dashboard' | 'companyProfile';
 
@@ -30,13 +30,15 @@ const App: React.FC = () => {
 
   if (!data) return <p role="status" className="connection-state">Connecting to workspace...</p>;
 
+  const openCompanyProfile = () => { setPage('companyProfile'); setView('classic'); };
+
   const renderPage = () => {
     switch (page) {
       case 'packages': return <ItemPackagesPage packages={itemPackages} setPackages={setItemPackages} />;
       case 'clients': return <ClientsPage clients={clients} setClients={setClients} />;
       case 'dashboard': return <DashboardPage documentSets={savedDocumentSets} onUpdateDocumentSet={saveDocumentSet} onDeleteDocumentSet={deleteDocumentSet} />;
       case 'companyProfile': return <CompanyProfilePage profile={companyProfile} setProfile={setCompanyProfile} />;
-      default: return <BackendDocuments clients={clients} />;
+      default: return <BackendDocuments clients={clients} packages={itemPackages} companyProfile={companyProfile} onOpenProfile={openCompanyProfile} />;
     }
   };
 
@@ -57,7 +59,7 @@ const App: React.FC = () => {
         </div>
         {pending > 0 && <p role="status" className="sync-note">Saving changes...</p>}
         {error && <p role="alert" className="error-note">{error}</p>}
-        {view === 'documents' ? <BackendDocuments clients={clients} /> : view === 'import' ? <LegacyImport /> : renderPage()}
+        {view === 'documents' ? <BackendDocuments clients={clients} packages={itemPackages} companyProfile={companyProfile} onOpenProfile={openCompanyProfile} /> : view === 'import' ? <LegacyImport /> : renderPage()}
       </main>
     </div>
   );

@@ -110,6 +110,26 @@ export const CompanyProfilePage: React.FC<CompanyProfilePageProps> = ({ profile,
                             </div>
                         </div>
                     </div>
+
+                    <div className="border-t border-gray-200 pt-6">
+                        <h2 className="text-xl font-semibold text-gray-800 mb-2">Mobile Wallet</h2>
+                        <p className="text-gray-600 mb-4">Add a wallet as an optional payment destination for quotes and invoices.</p>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+                            <div>
+                                <label htmlFor="mobileWalletProvider" className="block text-sm font-medium text-gray-600 mb-2">Provider / network</label>
+                                <input type="text" name="mobileWalletProvider" id="mobileWalletProvider" value={formData.mobileWalletProvider} onChange={handleChange} placeholder="e.g. EcoCash or M-Pesa" className="w-full bg-gray-50 border border-gray-300 rounded-lg p-3" />
+                            </div>
+                            <div>
+                                <label htmlFor="mobileWalletNumber" className="block text-sm font-medium text-gray-600 mb-2">Wallet mobile number</label>
+                                <input type="tel" name="mobileWalletNumber" id="mobileWalletNumber" value={formData.mobileWalletNumber} onChange={handleChange} placeholder="e.g. +266 5XX XXX XXX" className="w-full bg-gray-50 border border-gray-300 rounded-lg p-3" />
+                            </div>
+                            <div className="md:col-span-2">
+                                <label htmlFor="mobileWalletName" className="block text-sm font-medium text-gray-600 mb-2">Wallet account name</label>
+                                <input type="text" name="mobileWalletName" id="mobileWalletName" value={formData.mobileWalletName} onChange={handleChange} placeholder="Name returned by the wallet service" className="w-full bg-gray-50 border border-gray-300 rounded-lg p-3" />
+                                <p className="text-gray-500 text-xs mt-2">Confirm this name in the wallet app before sending payment. Brief Doc X does not verify it with the provider.</p>
+                            </div>
+                        </div>
+                    </div>
                     
                     <div className="flex justify-end pt-4">
                         <button
