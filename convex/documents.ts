@@ -69,6 +69,18 @@ export const issue = mutation({ args: { id: v.id('documents'), expectedRevision:
   await recordEvent(ctx, 'DocumentIssued', id);
   return number;
 }});
+export const reissue = mutation({ args: { id: v.id('documents'), requestKey: v.string() }, handler: async (ctx, args) => {
+  requireDevelopment();
+  const fingerprint = JSON.stringify(args);
+  const prior = await ctx.db.query('requests').withIndex('by_key', q => q.eq('key', args.requestKey)).unique();
+  if (prior) { if (prior.fingerprint !== fingerprint) throw new Error('Request key conflict.'); return prior.result; }
+  const original = await ctx.db.get(args.id);
+  if (!original || original.archived || original.status === 'draft') throw new Error('Only issued documents can be reissued.');
+  const id = await ctx.db.insert('documents', { type: original.type, content: original.content, status: 'draft', revision: 1, totalMinor: original.totalMinor, amountPaidMinor: 0, sourceId: original._id, archived: false, createdAt: Date.now() });
+  await ctx.db.insert('requests', { key: args.requestKey, fingerprint, result: id });
+  await recordEvent(ctx, 'DocumentReissueDraftCreated', id, args.requestKey);
+  return id;
+}});
 export const transition = mutation({ args: { id: v.id('documents'), status: v.string(), expectedRevision: v.number() }, handler: async (ctx, args) => {
   requireDevelopment(); const doc = await ctx.db.get(args.id);
   if (!doc || doc.revision !== args.expectedRevision) throw new Error('Document changed.');

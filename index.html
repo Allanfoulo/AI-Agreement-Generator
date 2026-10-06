@@ -74,7 +74,9 @@
       .brief-textarea { padding: 11px; line-height: 1.5; resize: vertical; }
       .line-editor { display: grid; gap: 9px; padding-top: 4px; }
       .line-editor-head { display: flex; align-items: center; justify-content: space-between; color: var(--ink-muted); font-size: 10px; font-weight: 800; letter-spacing: 0.09em; text-transform: uppercase; }
-      .line-row { display: grid; grid-template-columns: minmax(0, 1.4fr) 0.55fr 0.75fr; gap: 7px; }
+      .line-row { display: grid; grid-template-columns: minmax(0, 1.4fr) 0.55fr 0.75fr 32px; gap: 7px; }
+      .line-remove { align-self: stretch; border: 1px solid var(--line); border-radius: 7px; background: var(--paper-deep); color: var(--ink-muted); font-size: 17px; line-height: 1; transition: border-color 180ms ease-out, background 180ms ease-out, color 180ms ease-out; }
+      .line-remove:hover { border-color: var(--orange); background: var(--orange-soft); color: var(--orange-deep); }
       .button-primary, .button-quiet, .button-link { border: 0; border-radius: 7px; font-size: 12px; font-weight: 750; transition: transform 180ms ease-out, background 180ms ease-out, color 180ms ease-out; }
       .button-primary { padding: 11px 15px; background: var(--orange); color: var(--rail); }
       .button-primary:hover { background: oklch(0.72 0.16 50); transform: translateY(-1px); }
@@ -104,7 +106,7 @@
       .job-row a { color: var(--orange-deep); text-decoration: none; }
       .empty-copy { padding: 25px 21px; color: var(--ink-muted); font-size: 12px; }
       @media (max-width: 940px) { .app-rail { width: 205px; } .brief-main { padding-right: 28px; padding-left: 28px; } .workspace-hero, .document-grid { grid-template-columns: 1fr; } .hero-copy { margin: 0; } }
-      @media (max-width: 660px) { .brief-shell { display: block; } .app-rail { width: 100%; min-height: auto; padding: 15px; } .rail-brand { padding-bottom: 15px; } .rail-create { margin-bottom: 14px; } .rail-label, .rail-spacer, .rail-secondary, .rail-profile, .rail-remove-logo { display: none; } .rail-nav { display: flex; overflow-x: auto; gap: 5px; } .rail-link { width: auto; flex: 0 0 auto; padding: 8px 10px; white-space: nowrap; } .rail-link.is-active { box-shadow: inset 0 -3px 0 var(--orange); } .brief-main { padding: 21px 16px 45px; } .main-topline { margin-bottom: 23px; } .workspace-hero { padding-top: 5px; } .workspace-hero h1 { font-size: 38px; } .line-row { grid-template-columns: 1fr 0.7fr; } .line-row input:first-child { grid-column: 1 / -1; } .jobs-list { grid-template-columns: 1fr; } }
+      @media (max-width: 660px) { .brief-shell { display: block; } .app-rail { width: 100%; min-height: auto; padding: 15px; } .rail-brand { padding-bottom: 15px; } .rail-create { margin-bottom: 14px; } .rail-label, .rail-spacer, .rail-secondary, .rail-profile, .rail-remove-logo { display: none; } .rail-nav { display: flex; overflow-x: auto; gap: 5px; } .rail-link { width: auto; flex: 0 0 auto; padding: 8px 10px; white-space: nowrap; } .rail-link.is-active { box-shadow: inset 0 -3px 0 var(--orange); } .brief-main { padding: 21px 16px 45px; } .main-topline { margin-bottom: 23px; } .workspace-hero { padding-top: 5px; } .workspace-hero h1 { font-size: 38px; } .line-row { grid-template-columns: 1fr 0.7fr 32px; } .line-row input:first-child { grid-column: 1 / -1; } .jobs-list { grid-template-columns: 1fr; } }
       [contenteditable="true"] { outline: none; border: 1px dashed var(--line); padding: 4px; border-radius: 4px; transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out; cursor: text; display: block; }
       [contenteditable="true"]:hover { background-color: var(--paper-deep); border-color: var(--ink-muted); }
       [contenteditable="true"]:focus { background-color: var(--orange-soft); border-color: var(--orange); border-style: solid; }
